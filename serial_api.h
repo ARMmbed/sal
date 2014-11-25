@@ -33,14 +33,17 @@
 #define SERIAL_EVENT_TX_COMPLETE (1 << (SERIAL_EVENT_TX_SHIFT + 0))
 #define SERIAL_EVENT_TX_ALL      (SERIAL_EVENT_TX_COMPLETE)
 
-#define SERIAL_EVENT_RX_COMPLETE      (1 << (SERIAL_EVENT_RX_SHIFT + 0))
-#define SERIAL_EVENT_RX_OVERRUN_ERROR (1 << (SERIAL_EVENT_RX_SHIFT + 1))
-#define SERIAL_EVENT_RX_FRAMING_ERROR (1 << (SERIAL_EVENT_RX_SHIFT + 2))
-#define SERIAL_EVENT_RX_PARITY_ERROR  (1 << (SERIAL_EVENT_RX_SHIFT + 3))
-#define SERIAL_EVENT_RX_OVERFLOW      (1 << (SERIAL_EVENT_RX_SHIFT + 4))
-#define SERIAL_EVENT_RX_ALL           (SERIAL_EVENT_RX_OVERFLOW | SERIAL_EVENT_RX_PARITY_ERROR | \
-                                       SERIAL_EVENT_RX_FRAMING_ERROR | SERIAL_EVENT_RX_OVERRUN_ERROR \
-                                       SERIAL_EVENT_RX_COMPLETE)
+#define SERIAL_EVENT_RX_COMPLETE        (1 << (SERIAL_EVENT_RX_SHIFT + 0))
+#define SERIAL_EVENT_RX_OVERRUN_ERROR   (1 << (SERIAL_EVENT_RX_SHIFT + 1))
+#define SERIAL_EVENT_RX_FRAMING_ERROR   (1 << (SERIAL_EVENT_RX_SHIFT + 2))
+#define SERIAL_EVENT_RX_PARITY_ERROR    (1 << (SERIAL_EVENT_RX_SHIFT + 3))
+#define SERIAL_EVENT_RX_OVERFLOW        (1 << (SERIAL_EVENT_RX_SHIFT + 4))
+#define SERIAL_EVENT_RX_CHARACTER_MATCH (1 << (SERIAL_EVENT_RX_SHIFT + 5))
+#define SERIAL_EVENT_RX_ALL             (SERIAL_EVENT_RX_OVERFLOW | SERIAL_EVENT_RX_PARITY_ERROR | \
+                                         SERIAL_EVENT_RX_FRAMING_ERROR | SERIAL_EVENT_RX_OVERRUN_ERROR \
+                                         SERIAL_EVENT_RX_COMPLETE | SERIAL_EVENT_RX_CHARACTER_MATCH)
+
+#define SERIAL_RESERVED_CHAR_MATCH (255)
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,6 +75,8 @@ typedef struct {
     struct serial_s serial;
     struct buffer_s tx_buff;
     struct buffer_s rx_buff;
+    uint8_t char_match;
+    uint8_t char_found;
 } serial_t;
 
 void serial_init       (serial_t *obj, PinName tx, PinName rx);
@@ -138,6 +143,8 @@ void serial_write_enable_interrupt(serial_t *obj, uint32_t address, uint8_t enab
 
 // Enable interrupt for rx
 void serial_read_enable_interrupt(serial_t *obj, uint32_t address, uint8_t enable);
+
+void serial_set_char_match(serial_t *obj, uint8_t char_match);
 
 #ifdef __cplusplus
 }
