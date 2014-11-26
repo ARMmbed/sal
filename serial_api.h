@@ -30,9 +30,20 @@
 
 #define SERIAL_EVENT_ERROR (1 << 1)
 
+/**
+ * @defgroup SerialTXEvents Serial TX Events Macros
+ *
+ * @{
+ */
 #define SERIAL_EVENT_TX_COMPLETE (1 << (SERIAL_EVENT_TX_SHIFT + 0))
 #define SERIAL_EVENT_TX_ALL      (SERIAL_EVENT_TX_COMPLETE)
+/**@}*/
 
+/**
+ * @defgroup SerialRXEvents Serial RX Events Macros
+ *
+ * @{
+ */
 #define SERIAL_EVENT_RX_COMPLETE        (1 << (SERIAL_EVENT_RX_SHIFT + 0))
 #define SERIAL_EVENT_RX_OVERRUN_ERROR   (1 << (SERIAL_EVENT_RX_SHIFT + 1))
 #define SERIAL_EVENT_RX_FRAMING_ERROR   (1 << (SERIAL_EVENT_RX_SHIFT + 2))
@@ -42,6 +53,7 @@
 #define SERIAL_EVENT_RX_ALL             (SERIAL_EVENT_RX_OVERFLOW | SERIAL_EVENT_RX_PARITY_ERROR | \
                                          SERIAL_EVENT_RX_FRAMING_ERROR | SERIAL_EVENT_RX_OVERRUN_ERROR \
                                          SERIAL_EVENT_RX_COMPLETE | SERIAL_EVENT_RX_CHARACTER_MATCH)
+/**@}*/
 
 #define SERIAL_RESERVED_CHAR_MATCH (255)
 
@@ -85,11 +97,11 @@ typedef struct {
  */
 
 /** Initialize the serial peripheral. It sets the default parameters for serial
- *  peripheral, and its specifieds pins.
+ *  peripheral, and configure its specifieds pins.
  *
  * @param obj The serial object
- * @param tx The TX pin
- * @param rx The RX pin
+ * @param tx  The TX pin
+ * @param rx  The RX pin
  */
 void serial_init(serial_t *obj, PinName tx, PinName rx);
 
@@ -107,7 +119,7 @@ void serial_free(serial_t *obj);
  */
 void serial_baud(serial_t *obj, int baudrate);
 
-/** Configure the format. Set the number of bits, parity and the number of stop bits.
+/** Configure the format. Set the number of bits, parity and the number of stop bits
  *
  * @param obj       The serial object
  * @param data_bits The number of data bits
@@ -180,7 +192,7 @@ void serial_break_clear(serial_t *obj);
 
 /** Configure the TX pin for UART function.
  *
- * @param
+ * @param tx The pin used for TX
  */
 void serial_pinout_tx(PinName tx);
 
@@ -201,7 +213,8 @@ void serial_set_flow_control(serial_t *obj, FlowControl type, PinName rxflow, Pi
  * @{
  */
 
-/** Begin asynchronous TX transfer. The used buffer is specified in the serial objec - tx_buff
+/** Begin asynchronous TX transfer. The used buffer is specified in the serial object,
+ *  tx_buff
  *
  * @param obj  The serial object
  * @param cb   The function to call when an event occurs
@@ -222,19 +235,19 @@ void serial_start_read_asynch(serial_t *obj, void* cb, DMA_USAGE_Enum hint);
 /** Configure TX events
  *
  * @param obj    The serial object
- * @param event  The logical OR of the events to modify
+ * @param event  The logical OR of the TX events to configure
  * @param enable Set to non-zero to enable events, or zero to disable them
  */
 void serial_tx_enable_event(serial_t *obj, uint32_t event, uint8_t enable);
 
 /**
  * @param obj    The serial object.
- * @param event
- * @param enable
+ * @param event  The logical OR of the RX events to configure
+ * @param enable Set to non-zero to enable events, or zero to disable them
  */
 void serial_rx_enable_event(serial_t *obj, uint32_t event, uint8_t enable);
 
-/** Configure the TX buffer for an asynchronous write serial transaction.
+/** Configure the TX buffer for an asynchronous write serial transaction
  *
  * @param obj       The serial object.
  * @param tx        The buffer for sending.
@@ -242,7 +255,7 @@ void serial_rx_enable_event(serial_t *obj, uint32_t event, uint8_t enable);
  */
 void serial_tx_buffer_set(serial_t *obj, void *tx, uint32_t tx_length);
 
-/** Configure the TX buffer for an asynchronous read serial transaction.
+/** Configure the TX buffer for an asynchronous read serial transaction
  *
  * @param obj       The serial object.
  * @param rx        The buffer for receiving.
@@ -250,45 +263,47 @@ void serial_tx_buffer_set(serial_t *obj, void *tx, uint32_t tx_length);
  */
 void serial_rx_buffer_set(serial_t *obj, void *rx, uint32_t tx_length);
 
-/** Attempts to determine if the serial peripheral is already in use for RX
+/** Attempts to determine if the serial peripheral is already in use for TX
  *
- * @param obj  The serial object
+ * @param obj The serial object
  * @return Non-zero if the RX transaction is ongoing, 0 otherwise
  */
 uint8_t serial_tx_active(serial_t *obj);
 
 /** Attempts to determine if the serial peripheral is already in use for RX
  *
- * @param obj  The serial object
+ * @param obj The serial object
  * @return Non-zero if the RX transaction is ongoing, 0 otherwise
  */
 uint8_t serial_rx_active(serial_t *obj);
 
-/** The asynchronous TX handler
+/** The asynchronous TX handler. Writes to the TX FIFO and checks for events.
+ *  If any TX event has occured, the TX abort function is called.
  *
- * @param obj  The serial object
+ * @param obj The serial object
  * @return Returns event flags if a TX transfer termination condition was met or 0 otherwise
  */
 uint32_t serial_tx_irq_handler_asynch(serial_t *obj);
 
-/** The asynchronous RX handler
+/** The asynchronous RX handler. Reads from the RX FIFOF and checks for events.
+ *  If any RX event has occured, the RX abort function is called.
  *
- * @param obj  The serial object
+ * @param obj The serial object
  * @return Returns event flags if a RX transfer termination condition was met or 0 otherwise
  */
 uint32_t serial_rx_irq_handler_asynch(serial_t *obj);
 
-/** Abort the ongoing TX transaction. It disables the TX enabled interupt and
- *  flush TX hardware buffer
+/** Abort the ongoing TX transaction. It disables the enabled interupt for TX and
+ *  flush TX hardware buffer if TX FIFO is used
  *
- * @param obj  The serial object
+ * @param obj The serial object
  */
 void serial_tx_abort_asynch(serial_t *obj);
 
-/** Abort the ongoing RX transaction It disables the RX enabled interrupt and
- *  flush RX hardware buffer
+/** Abort the ongoing RX transaction It disables the enabled interrupt for RX and
+ *  flush RX hardware buffer if RX FIFO is used
  *
- * @param obj  The serial object
+ * @param obj The serial object
  */
 void serial_rx_abort_asynch(serial_t *obj);
 
@@ -300,7 +315,7 @@ void serial_rx_abort_asynch(serial_t *obj);
  */
 void serial_write_enable_interrupt(serial_t *obj, uint32_t address, uint8_t enable);
 
-/** Enable and set the interrupt handler for reading (RX)
+/** Enable and set the interrupt handler for read (RX)
  *
  * @param obj     The serial object
  * @param address The address of RX handler
@@ -308,10 +323,12 @@ void serial_write_enable_interrupt(serial_t *obj, uint32_t address, uint8_t enab
  */
 void serial_read_enable_interrupt(serial_t *obj, uint32_t address, uint8_t enable);
 
-/** Set character match.
+/** Set character to be matched. If an event is enabled, and received character
+ *  matches the defined char_match, the receiving process is stopped and MATCH event
+ *  is invoked
  *
  * @param obj        The serial object
- * @param char_match Character in range 1-254
+ * @param char_match A character in range 0-254
  */
 void serial_set_char_match(serial_t *obj, uint8_t char_match);
 
