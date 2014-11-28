@@ -1,7 +1,7 @@
 #ifndef LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
 #define LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
 
-
+#include "ip_addr.h"
 typedef struct {
     // TBD
 } socket_t;
@@ -10,9 +10,7 @@ typedef struct {
     // TBD
 } event_t;
 
-typedef struct {
-    // TBD
-} address_t;
+typedef ip_addr_t address_t;
 
 typedef enum {
     SOCKET_ERROR_NONE = 0,
@@ -42,11 +40,6 @@ typedef enum {
  */
 typedef void (*handler_t)(socket_error_t, event_t *);
 
-// TODO: The type of the buffers is TBD
-// buffer_t is always passed by value to avoid losing temporary buffer_t's
-typedef struct {
-    void *p;
-    size_t l;
-} buffer_t;
+
 
 #endif /* LIBRARIES_MBED_HAL_SOCKET_TYPES_H_ */
