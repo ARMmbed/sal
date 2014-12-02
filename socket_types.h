@@ -2,24 +2,48 @@
 #define LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
 
 #include "ip_addr.h"
-typedef struct {
-    // TBD
-} socket_t;
 
 typedef struct {
     // TBD
 } event_t;
 
+// TODO: Abstract ip_addr_t
 typedef ip_addr_t address_t;
 
 typedef enum {
     SOCKET_ERROR_NONE = 0,
+    SOCKET_ERROR_UNKNOWN,
     SOCKET_ERROR_BUSY,
+    SOCKET_ERROR_NULL_PTR,
+    SOCKET_ERROR_BAD_FAMILY,
+    SOCKET_ERROR_TIMEOUT,
+    SOCKET_ERROR_BAD_ALLOC,
+
 } socket_error_t;
+
+typedef enum {
+    SOCKET_ALLOC_HEAP = 0,
+    SOCKET_ALLOC_POOL_BEST,
+} socket_alloc_pool_t;
 
 typedef enum {
     // TBD
 } socket_flags_t;
+
+typedef void (*socket_api_handler)(void*);
+typedef struct {
+    void * (*alloc)(void *, size_t);
+    void *context;
+} socket_allocator_t;
+
+struct socket_recv_info {
+    void *context;
+    struct socket *sock;
+    address_t *src;
+    uint16_t port;
+    struct socket_buffer *buf;
+    uint8_t free_buf;
+};
 
 // TODO: The type of handler_t is TBD.
 // NOTE: Since handlers are passed using C++ references, a global null handler will be provided so that empty handlers
@@ -40,6 +64,8 @@ typedef enum {
  */
 typedef void (*handler_t)(socket_error_t, event_t *);
 
+struct socket;
+struct socket_buffer;
 
 
 #endif /* LIBRARIES_MBED_HAL_SOCKET_TYPES_H_ */
