@@ -86,7 +86,7 @@ typedef struct {
 /*
  * Our fallback alternative for handler_t is a function pointer:
  */
-typedef void (*handler_t)(socket_error_t, socket_event_t *);
+typedef void (*handler_t)(void *);
 
 struct socket;
 struct socket_buffer;
