@@ -12,16 +12,16 @@
 
 socket_error_t socket_init();
 
-socket_error_t socket_create(struct socket *socket, uint8_t family, socket_api_handler handler);
+socket_error_t socket_create(struct socket *socket, socket_proto_family_t family, socket_api_handler handler);
 socket_error_t socket_destroy(struct socket *socket);
 
-socket_error_t socket_connect(struct socket *socket, address_t *address, uint16_t port);
-socket_error_t socket_bind(struct socket *socket, address_t *address, uint16_t port);
+socket_error_t socket_connect(struct socket *socket, struct socket_addr *address, uint16_t port);
+socket_error_t socket_bind(struct socket *socket, struct socket_addr *address, uint16_t port);
 
-socket_error_t socket_start_listen(address_t *address, uint16_t port, socket_api_handler handler);
-socket_error_t socket_stop_listen(address_t *address, uint16_t port);
+socket_error_t socket_start_listen(struct socket_addr *address, uint16_t port, socket_api_handler handler);
+socket_error_t socket_stop_listen(struct socket_addr *address, uint16_t port);
 
-socket_error_t socket_start_send(struct socket *socket, void *arg, struct socket_buffer *buf);
+socket_error_t socket_start_send(struct socket *socket, void *arg, struct socket_buffer *buf, uint8_t autofree);
 socket_error_t socket_start_recv(struct socket *socket, void *arg);
 
 uint8_t socket_is_connected(struct socket *sock);

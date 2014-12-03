@@ -1,10 +1,12 @@
 #ifndef LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
 #define LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
 
-#include "ip_addr.h"
+#include <stddef.h>
+#include <stdint.h>
 
-// TODO: Abstract ip_addr_t
-typedef ip_addr_t address_t;
+struct socket;
+struct socket_buffer;
+struct socket_addr;
 
 typedef enum {
     SOCKET_ERROR_NONE = 0,
@@ -22,12 +24,19 @@ typedef enum {
     SOCKET_ALLOC_POOL_BEST,
 } socket_alloc_pool_t;
 
+//typedef enum {
+//    // TBD
+//} socket_flags_t;
+
 typedef enum {
-    // TBD
-} socket_flags_t;
+    SOCKET_DGRAM = 1,
+    SOCKET_STREAM,
+    SOCKET_RAW,
+} socket_proto_family_t;
 
 typedef enum {
     SOCKET_EVENT_NONE = 0,
+    SOCKET_EVENT_ERROR,
     SOCKET_EVENT_RX_DONE,
     SOCKET_EVENT_TX_DONE,
     SOCKET_EVENT_RX_ERROR,
@@ -49,7 +58,7 @@ typedef struct {
 struct socket_recv_info {
     void *context;
     struct socket *sock;
-    address_t *src;
+    struct socket_addr *src;
     uint16_t port;
     struct socket_buffer *buf;
     uint8_t free_buf;
@@ -67,6 +76,7 @@ typedef struct {
     union {
         struct socket_recv_info r;
         struct socket_tx_info t;
+        socket_error_t e;
     } i;
 } socket_event_t;
 // TODO: The type of handler_t is TBD.
@@ -87,9 +97,6 @@ typedef struct {
  * Our fallback alternative for handler_t is a function pointer:
  */
 typedef void (*handler_t)(void *);
-
-struct socket;
-struct socket_buffer;
 
 
 #endif /* LIBRARIES_MBED_HAL_SOCKET_TYPES_H_ */
