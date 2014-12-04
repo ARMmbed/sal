@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-struct socket;
 struct socket_buffer;
 struct socket_addr;
 
@@ -49,7 +48,7 @@ typedef enum {
     SOCKET_STATUS_TX_BUSY = 1 << 1,
 } socket_status_t;
 
-typedef void (*socket_api_handler)(void*);
+typedef void (*socket_api_handler)(void);
 typedef struct {
     void * (*alloc)(void *, size_t);
     void *context;
@@ -79,6 +78,15 @@ typedef struct {
         socket_error_t e;
     } i;
 } socket_event_t;
+
+struct socket {
+    void *handler;
+    socket_status_t status;
+    uint8_t family;
+    socket_event_t *event; // TODO: (CThunk upgrade/Alpha2)
+    struct socket_impl impl;
+};
+
 // TODO: The type of handler_t is TBD.
 // NOTE: Since handlers are passed using C++ references, a global null handler will be provided so that empty handlers
 // are provided for.  Overriding the null handler is likely to be useful for debugging.
