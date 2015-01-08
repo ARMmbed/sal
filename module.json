@@ -1,0 +1,20 @@
+
+{
+    "name": "mbed-net-socket-abstract",
+    "version": "0.0.0",
+    "description": "",
+    "keywords": [
+    ],
+    "author": "name <email@arm.com>",
+    "repository": {
+        "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
+        "type": "git"
+    },
+    "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
+    "license": "Apache-2",
+    "dependencies": {
+    },
+    "extraIncludes": ["mbed-net-socket-abstract"],
+    "targetDependencies": {
+    }
+}
