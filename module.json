@@ -16,5 +16,8 @@
     },
     "extraIncludes": ["mbed-net-socket-abstract"],
     "targetDependencies": {
+      "lwip-k64f":{
+        "mbed-net-lwip":"ARMmbed/mbed-net-lwip"
+      }
     }
 }
