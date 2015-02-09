@@ -48,6 +48,7 @@ typedef enum {
     SOCKET_EVENT_RX_ERROR,
     SOCKET_EVENT_TX_ERROR,
     SOCKET_EVENT_CONNECT,
+    SOCKET_EVENT_DISCONNECT,
     SOCKET_EVENT_DNS,
 } event_flag_t;
 
@@ -55,6 +56,7 @@ typedef enum {
     SOCKET_STATUS_IDLE = 0,
     SOCKET_STATUS_RX_BUSY = 1 << 0,
     SOCKET_STATUS_TX_BUSY = 1 << 1,
+    SOCKET_STATUS_CONNECTED = 1 << 2,
 } socket_status_t;
 
 typedef enum {
@@ -112,7 +114,7 @@ struct socket_tx_info {
 
 struct socket_dns_info {
   struct socket *sock;
-  void *addr; // A stack-specific socket address struct
+  struct socket_addr *addr; // A stack-specific socket address struct
   const char *domain;
 };
 
