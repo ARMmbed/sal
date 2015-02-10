@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-struct socket_addr;
-
 typedef enum {
     SOCKET_ERROR_NONE = 0,
     SOCKET_ERROR_UNKNOWN,
@@ -76,6 +74,11 @@ typedef enum {
     SOCKET_BUFFER_NANOSTACK_PBUF,
 } socket_buffer_type_t;
 
+struct socket_addr {
+    socket_stack_t type;
+    void *impl;
+};
+
 struct socket_buffer {
     socket_buffer_type_t type;
     uint32_t flags;
@@ -98,7 +101,7 @@ typedef struct {
 struct socket_recv_info {
     void *context;
     struct socket *sock;
-    struct socket_addr *src;
+    struct socket_addr src;
     uint16_t port;
     struct socket_buffer buf;
     uint8_t free_buf;
@@ -114,7 +117,7 @@ struct socket_tx_info {
 
 struct socket_dns_info {
   struct socket *sock;
-  struct socket_addr *addr; // A stack-specific socket address struct
+  struct socket_addr addr; // A stack-specific socket address struct
   const char *domain;
 };
 
