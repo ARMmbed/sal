@@ -18,8 +18,8 @@ uint32_t socket_periodic_interval(const struct socket * socket);
 
 socket_error_t socket_resolve(struct socket *socket, const char *address, struct socket_addr *addr);
 
-socket_error_t socket_connect(struct socket *socket, const void *address, const uint16_t port);
-socket_error_t socket_bind(struct socket *socket, const void *address, const uint16_t port);
+socket_error_t socket_connect(struct socket *sock, struct socket_addr *address, const uint16_t port);
+socket_error_t socket_bind(struct socket *sock, struct socket_addr *address, const uint16_t port);
 
 socket_error_t socket_start_listen(struct socket *socket, const void *address, const uint16_t port, socket_api_handler_t const handler);
 socket_error_t socket_stop_listen(struct socket *socket);
