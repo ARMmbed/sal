@@ -20,6 +20,11 @@ typedef enum {
     SOCKET_ERROR_NO_CONNECTION,
     SOCKET_ERROR_SIZE,
     SOCKET_ERROR_BAD_BUFFER,
+    SOCKET_ERROR_STACK_EXISTS,
+    SOCKET_ERROR_STACKS,
+    SOCKET_ERROR_BAD_STACK,
+    SOCKET_ERROR_BAD_ADDRESS,
+    SOCKET_ERROR_DNS_FAILED,
 
 } socket_error_t;
 
@@ -59,10 +64,9 @@ typedef enum {
 
 typedef enum {
     SOCKET_STACK_UNINIT = 0,
-    SOCKET_STACK_RAW,
     SOCKET_STACK_LWIP_IPV4,
     SOCKET_STACK_LWIP_IPV6,
-    SOCKET_STACK_PLACEHOLDER,
+    SOCKET_STACK_RESERVED,
     SOCKET_STACK_NANOSTACK_IPV6,
     SOCKET_STACK_MAX,
 } socket_stack_t;
@@ -120,8 +124,7 @@ struct socket_dns_info {
   struct socket_addr addr; // A stack-specific socket address struct
   const char *domain;
 };
-
-typedef struct {
+struct socket_event {
     event_flag_t event;
     union {
         struct socket_recv_info r;
@@ -129,7 +132,8 @@ typedef struct {
         socket_error_t e;
         struct socket_dns_info d;
     } i;
-} socket_event_t;
+};
+typedef struct socket_event socket_event_t;
 
 struct socket {
     void *handler;
@@ -137,6 +141,7 @@ struct socket {
     uint8_t family;
     socket_event_t *event; // TODO: (CThunk upgrade/Alpha2)
     socket_stack_t stack;
+    const struct socket_api *api;
     void *impl;
 };
 
