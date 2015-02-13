@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -86,6 +85,7 @@ struct socket_addr {
 struct socket_buffer {
     socket_buffer_type_t type;
     uint32_t flags;
+    const struct socket_buf_api *api;
     void *impl;
 };
 

@@ -27,7 +27,7 @@ const char * socket_strerror(socket_error_t err)
   }
 }
 
-socket_buffer_type_t socket_buf_stack_to_buf(const socket_stack_t stack)
+socket_buffer_type_t socket_buf_stack_to_type(const socket_stack_t stack)
 {
     switch (stack) {
     case SOCKET_STACK_UNINIT:
@@ -42,6 +42,30 @@ socket_buffer_type_t socket_buf_stack_to_buf(const socket_stack_t stack)
         break;
     }
     return SOCKET_BUFFER_UNINITIALISED;
+}
+
+const struct socket_buf_api * socket_buf_type_to_api(socket_buffer_type_t buf_type)
+{
+    const struct socket_api * api = NULL;
+    switch(buf_type)
+    {
+    case SOCKET_BUFFER_LWIP_PBUF:
+        api = socket_get_api(SOCKET_STACK_LWIP_IPV4);
+        if (api == NULL) {
+            api = socket_get_api(SOCKET_STACK_LWIP_IPV6);
+        }
+        break;
+    case SOCKET_BUFFER_NANOSTACK_PBUF:
+        api = socket_get_api(SOCKET_STACK_NANOSTACK_IPV6);
+        break;
+    default:
+        api = NULL;
+        break;
+    }
+    if(api != NULL) {
+        return &api->buf_api;
+    }
+    return NULL;
 }
 
 const struct socket_api * socket_get_api(const socket_stack_t stack)

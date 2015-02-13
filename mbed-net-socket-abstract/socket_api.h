@@ -14,6 +14,26 @@ extern "C" {
 #define SOCKET_MAX_STACKS 2
 #endif
 
+typedef void * (*socket_buf_get_ptr)(const struct socket_buffer *b);
+typedef size_t (*socket_buf_get_size)(const struct socket_buffer *b);
+typedef void (*socket_buf_alloc)(const size_t len, const socket_alloc_pool_t p, struct socket_buffer *b);
+typedef socket_error_t (*socket_buf_try_free)(struct socket_buffer *b);
+typedef void (*socket_buf_free)(struct socket_buffer *b);
+typedef socket_error_t (*socket_copy_from_user)(struct socket_buffer *b, const void *u, const size_t len);
+typedef uint16_t (*socket_copy_to_user)(void *u, const struct socket_buffer *b, const size_t len);
+
+struct socket_buf_api {
+    //socket_buf_stack_to_buf stack_to_buf;
+    socket_buf_get_ptr      get_ptr;
+    socket_buf_get_size     get_size;
+    socket_buf_alloc        alloc;
+    socket_buf_try_free     try_free;
+    socket_buf_free         free;
+    socket_copy_from_user   u2b;
+    socket_copy_to_user     b2u;
+};
+
+
 typedef socket_error_t (*socket_init)();
 typedef socket_error_t (*socket_create)(struct socket *socket, const socket_proto_family_t family, socket_api_handler_t const handler);
 typedef socket_error_t (*socket_destroy)(struct socket *socket);
@@ -37,6 +57,7 @@ typedef uint8_t (*socket_rx_is_busy)(const struct socket *socket);
 struct socket_api {
     socket_stack_t              stack;
     socket_init                 init;
+    struct socket_buf_api       buf_api;
     socket_create               create;
     socket_destroy              destroy;
     socket_close                close;
