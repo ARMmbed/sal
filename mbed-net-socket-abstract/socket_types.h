@@ -8,6 +8,12 @@
 extern "C" {
 #endif
 
+#ifndef MBED_NET_LWIP
+#define MBED_NET_LWIP 1
+#endif
+
+
+
 typedef enum {
     SOCKET_ERROR_NONE = 0,
     SOCKET_ERROR_UNKNOWN,
@@ -52,13 +58,15 @@ typedef enum {
     SOCKET_EVENT_CONNECT,
     SOCKET_EVENT_DISCONNECT,
     SOCKET_EVENT_DNS,
+    SOCKET_EVENT_ACCEPT,
 } event_flag_t;
 
 typedef enum {
-    SOCKET_STATUS_IDLE = 0,
-    SOCKET_STATUS_RX_BUSY = 1 << 0,
-    SOCKET_STATUS_TX_BUSY = 1 << 1,
+    SOCKET_STATUS_IDLE      = 0,
+    SOCKET_STATUS_RX_BUSY   = 1 << 0,
+    SOCKET_STATUS_TX_BUSY   = 1 << 1,
     SOCKET_STATUS_CONNECTED = 1 << 2,
+    SOCKET_STATUS_BOUND     = 1 << 3,
 } socket_status_t;
 
 typedef enum {
@@ -76,6 +84,26 @@ typedef enum {
     SOCKET_BUFFER_LWIP_PBUF,
     SOCKET_BUFFER_NANOSTACK_PBUF,
 } socket_buffer_type_t;
+
+// TODO: The type of handler_t is TBD.
+// NOTE: Since handlers are passed using C++ references, a global null handler will be provided so that empty handlers
+// are provided for.  Overriding the null handler is likely to be useful for debugging.
+/*
+ * std::function, in combination with std::bind appear to be the ideal solution for handler_t, however
+ * std::bind, is not supported by all our targets. We might be able to work around this by porting
+ * boost::bind to mbed
+ */
+//typedef std::function<void(event_t*)> handler_t;
+/*
+ * We already have a feature in mbed for handling function pointers.
+ */
+//#include "FunctionPointer.h"
+//typedef FunctionPointer handler_t
+/*
+ * Our fallback alternative for handler_t is a function pointer:
+ */
+typedef void (*handler_t)(void *);
+
 
 struct socket_addr {
     socket_stack_t type;
@@ -124,6 +152,13 @@ struct socket_dns_info {
   struct socket_addr addr; // A stack-specific socket address struct
   const char *domain;
 };
+
+struct socket_accept_info {
+    struct socket *sock
+    void * newimpl;
+    uint8_t reject;
+}
+
 struct socket_event {
     event_flag_t event;
     union {
@@ -131,38 +166,21 @@ struct socket_event {
         struct socket_tx_info t;
         socket_error_t e;
         struct socket_dns_info d;
+        struct socket_accept_info a;
     } i;
 };
 typedef struct socket_event socket_event_t;
 
 struct socket {
-    void *handler;
-    socket_status_t status;
-    uint8_t family;
-    socket_event_t *event; // TODO: (CThunk upgrade/Alpha2)
-    socket_stack_t stack;
+    handler_t *handler;
+    socket_event_t *event; // TODO: (CThunk upgrade/Alpha3)
     const struct socket_api *api;
     void *impl;
+    socket_status_t status;
+    uint8_t family;
+    socket_stack_t stack;
 };
 
-// TODO: The type of handler_t is TBD.
-// NOTE: Since handlers are passed using C++ references, a global null handler will be provided so that empty handlers
-// are provided for.  Overriding the null handler is likely to be useful for debugging.
-/*
- * std::function, in combination with std::bind appear to be the ideal solution for handler_t, however
- * std::bind, is not supported by all our targets. We might be able to work around this by porting
- * boost::bind to mbed
- */
-//typedef std::function<void(event_t*)> handler_t;
-/*
- * We already have a feature in mbed for handling function pointers.
- */
-//#include "FunctionPointer.h"
-//typedef FunctionPointer handler_t
-/*
- * Our fallback alternative for handler_t is a function pointer:
- */
-typedef void (*handler_t)(void *);
 
 #ifdef __cplusplus
 }
