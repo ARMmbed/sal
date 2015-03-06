@@ -12,11 +12,10 @@ extern "C" {
 #define MBED_NET_LWIP 1
 #endif
 
-
-
 typedef enum {
     SOCKET_ERROR_NONE = 0,
     SOCKET_ERROR_UNKNOWN,
+	SOCKET_ERROR_UNIMPLEMENTED,
     SOCKET_ERROR_BUSY,
     SOCKET_ERROR_NULL_PTR,
     SOCKET_ERROR_BAD_FAMILY,
@@ -41,9 +40,16 @@ typedef enum {
 //typedef enum {
 //    // TBD
 //} socket_flags_t;
+typedef enum {
+	SOCKET_AF_UNINIT,
+	SOCKET_AF_INET4,
+	SOCKET_AF_INET6,
+	SOCKET_AF_INVALID,
+} socket_address_family_t;
 
 typedef enum {
-    SOCKET_DGRAM = 1,
+	SOCKET_PROTO_UNINIT = 0,
+    SOCKET_DGRAM,
     SOCKET_STREAM,
     SOCKET_RAW,
 } socket_proto_family_t;
@@ -75,6 +81,7 @@ typedef enum {
     SOCKET_STACK_LWIP_IPV6,
     SOCKET_STACK_RESERVED,
     SOCKET_STACK_NANOSTACK_IPV6,
+	SOCKET_STACK_PICOTCP,
     SOCKET_STACK_MAX,
 } socket_stack_t;
 
@@ -131,18 +138,12 @@ typedef struct {
 } socket_allocator_t;
 
 struct socket_recv_info {
-    void *context;
-    struct socket *sock;
     struct socket_addr src;
     uint16_t port;
-    struct socket_buffer buf;
-    uint8_t free_buf;
 };
 
 struct socket_tx_info {
-    void *context;
     struct socket *sock;
-    struct socket_buffer *buf;
     uint16_t sentbytes;
     uint8_t free_buf;
 };
@@ -154,13 +155,14 @@ struct socket_dns_info {
 };
 
 struct socket_accept_info {
-    struct socket *sock
+    struct socket *sock;
     void * newimpl;
     uint8_t reject;
-}
+};
 
 struct socket_event {
     event_flag_t event;
+    struct socket *sock;
     union {
         struct socket_recv_info r;
         struct socket_tx_info t;
@@ -179,6 +181,7 @@ struct socket {
     socket_status_t status;
     uint8_t family;
     socket_stack_t stack;
+    void *rxBufChain; // TODO: Only required in some stacks, which do not support BSD-style buffering
 };
 
 

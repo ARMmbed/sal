@@ -63,7 +63,7 @@ const struct socket_buf_api * socket_buf_type_to_api(socket_buffer_type_t buf_ty
         break;
     }
     if(api != NULL) {
-        return &api->buf_api;
+//        return &api->buf_api;
     }
     return NULL;
 }
