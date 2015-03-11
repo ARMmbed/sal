@@ -35,10 +35,12 @@ struct socket_buf_api {
 
 
 typedef socket_error_t (*socket_init)();
-typedef socket_error_t (*socket_create)(struct socket *socket, const socket_address_family_t af, const socket_proto_family_t pf, socket_api_handler_t const handler);
+typedef socket_error_t (*socket_create)(struct socket *socket,
+		const socket_address_family_t af, const socket_proto_family_t pf,
+		socket_api_handler_t const handler);
 typedef socket_error_t (*socket_destroy)(struct socket *socket);
 typedef socket_error_t (*socket_close)(struct socket *socket);
-typedef void (*socket_abort)(struct socket *socket);
+//typedef void (*socket_abort)(struct socket *socket);
 typedef socket_api_handler_t (*socket_periodic_task)(const struct socket * socket);
 typedef uint32_t (*socket_periodic_interval)(const struct socket * socket);
 typedef socket_error_t (*socket_resolve)(struct socket *socket, const char *address);
@@ -47,11 +49,11 @@ typedef socket_error_t (*socket_bind)(struct socket *socket, const struct socket
 typedef socket_error_t (*socket_str2addr)(const struct socket *socket, struct socket_addr *addr, const char *address);
 typedef socket_error_t (*socket_start_listen)(struct socket *socket, const struct socket_addr *address, const uint16_t port, socket_api_handler_t const handler);
 typedef socket_error_t (*socket_stop_listen)(struct socket *socket);
-typedef socket_error_t (*socket_start_send)(struct socket *socket, struct socket_buffer *buf);
-typedef socket_error_t (*socket_start_sendv)(struct socket *socket, void *buf, size_t len);
-typedef socket_error_t (*socket_start_recv)(struct socket *socket);
-typedef socket_error_t (*socket_send)(struct socket *socket, void * buf, size_t *len);
-typedef socket_error_t (*socket_send_to)(struct socket *socket, void * buf, size_t *len, struct socket_addr *addr, const uint16_t port);
+//typedef socket_error_t (*socket_start_send)(struct socket *socket, struct socket_buffer *buf);
+//typedef socket_error_t (*socket_start_sendv)(struct socket *socket, void *buf, size_t len);
+//typedef socket_error_t (*socket_start_recv)(struct socket *socket);
+typedef socket_error_t (*socket_send)(struct socket *socket, const void * buf, const size_t len);
+typedef socket_error_t (*socket_send_to)(struct socket *socket, const void * buf, const size_t len, const struct socket_addr *addr, const uint16_t port);
 typedef socket_error_t (*socket_recv)(struct socket *socket, void * buf, size_t *len);
 typedef socket_error_t (*socket_recv_from)(struct socket *socket, void * buf, size_t *len, struct socket_addr *addr, uint16_t *port);
 

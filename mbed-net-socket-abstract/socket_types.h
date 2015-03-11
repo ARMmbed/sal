@@ -29,6 +29,8 @@ typedef enum {
     SOCKET_ERROR_BAD_STACK,
     SOCKET_ERROR_BAD_ADDRESS,
     SOCKET_ERROR_DNS_FAILED,
+	SOCKET_ERROR_WOULD_BLOCK,
+	SOCKET_ERROR_CLOSED,
 
 } socket_error_t;
 
@@ -114,7 +116,7 @@ typedef void (*handler_t)(void *);
 
 struct socket_addr {
     socket_stack_t type;
-    void *impl;
+	uint32_t storage[4];
 };
 
 struct socket_buffer {
@@ -136,11 +138,6 @@ typedef struct {
     void (*dealloc)(void *, void *);
     void *context;
 } socket_allocator_t;
-
-struct socket_recv_info {
-    struct socket_addr src;
-    uint16_t port;
-};
 
 struct socket_tx_info {
     struct socket *sock;
@@ -164,7 +161,6 @@ struct socket_event {
     event_flag_t event;
     struct socket *sock;
     union {
-        struct socket_recv_info r;
         struct socket_tx_info t;
         socket_error_t e;
         struct socket_dns_info d;
@@ -174,7 +170,7 @@ struct socket_event {
 typedef struct socket_event socket_event_t;
 
 struct socket {
-    handler_t *handler;
+    socket_api_handler_t handler;
     socket_event_t *event; // TODO: (CThunk upgrade/Alpha3)
     const struct socket_api *api;
     void *impl;
