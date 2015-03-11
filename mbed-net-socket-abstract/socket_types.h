@@ -140,19 +140,15 @@ typedef struct {
 } socket_allocator_t;
 
 struct socket_tx_info {
-    struct socket *sock;
     uint16_t sentbytes;
-    uint8_t free_buf;
 };
 
 struct socket_dns_info {
-  struct socket *sock;
   struct socket_addr addr; // A stack-specific socket address struct
   const char *domain;
 };
 
 struct socket_accept_info {
-    struct socket *sock;
     void * newimpl;
     uint8_t reject;
 };
