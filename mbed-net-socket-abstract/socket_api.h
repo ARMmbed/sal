@@ -2,8 +2,8 @@
  * PackageLicenseDeclared: Apache-2.0
  * Copyright 2015 ARM Holdings PLC
  */
-#ifndef LIBRARIES_MBED_HAL_SOCKET_API_H_
-#define LIBRARIES_MBED_HAL_SOCKET_API_H_
+#ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
+#define __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 
 #include "socket_types.h"
 #ifdef __cplusplus
@@ -103,4 +103,4 @@ const struct socket_api * socket_get_api(const socket_stack_t stack);
 }
 #endif
 
-#endif /* LIBRARIES_MBED_HAL_SOCKET_API_H_ */
+#endif /* __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__ */

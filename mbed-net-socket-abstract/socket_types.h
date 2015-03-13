@@ -1,5 +1,5 @@
-#ifndef LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
-#define LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
+#ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
+#define __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
 
 #include <stddef.h>
 #include <stdint.h>
@@ -15,7 +15,7 @@ extern "C" {
 typedef enum {
     SOCKET_ERROR_NONE = 0,
     SOCKET_ERROR_UNKNOWN,
-	SOCKET_ERROR_UNIMPLEMENTED,
+    SOCKET_ERROR_UNIMPLEMENTED,
     SOCKET_ERROR_BUSY,
     SOCKET_ERROR_NULL_PTR,
     SOCKET_ERROR_BAD_FAMILY,
@@ -29,8 +29,8 @@ typedef enum {
     SOCKET_ERROR_BAD_STACK,
     SOCKET_ERROR_BAD_ADDRESS,
     SOCKET_ERROR_DNS_FAILED,
-	SOCKET_ERROR_WOULD_BLOCK,
-	SOCKET_ERROR_CLOSED,
+    SOCKET_ERROR_WOULD_BLOCK,
+    SOCKET_ERROR_CLOSED,
 
 } socket_error_t;
 
@@ -39,14 +39,11 @@ typedef enum {
     SOCKET_ALLOC_POOL_BEST,
 } socket_alloc_pool_t;
 
-//typedef enum {
-//    // TBD
-//} socket_flags_t;
 typedef enum {
-	SOCKET_AF_UNINIT,
-	SOCKET_AF_INET4,
-	SOCKET_AF_INET6,
-	SOCKET_AF_INVALID,
+    SOCKET_AF_UNINIT,
+    SOCKET_AF_INET4,
+    SOCKET_AF_INET6,
+    SOCKET_AF_INVALID,
 } socket_address_family_t;
 
 typedef enum {
@@ -83,7 +80,7 @@ typedef enum {
     SOCKET_STACK_LWIP_IPV6,
     SOCKET_STACK_RESERVED,
     SOCKET_STACK_NANOSTACK_IPV6,
-	SOCKET_STACK_PICOTCP,
+    SOCKET_STACK_PICOTCP,
     SOCKET_STACK_MAX,
 } socket_stack_t;
 
@@ -121,7 +118,6 @@ struct socket_addr {
 
 struct socket_buffer {
     socket_buffer_type_t type;
-    uint32_t flags;
     const struct socket_buf_api *api;
     void *impl;
 };
@@ -176,8 +172,7 @@ struct socket {
     void *rxBufChain; // TODO: Only required in some stacks, which do not support BSD-style buffering
 };
 
-
 #ifdef __cplusplus
 }
 #endif
-#endif /* LIBRARIES_MBED_HAL_SOCKET_TYPES_H_ */
+#endif /* __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__ */

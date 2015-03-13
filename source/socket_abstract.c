@@ -1,5 +1,5 @@
-#include "socket_api.h"
-#include "socket_types.h"
+#include <mbed-net-socket-abstract/socket_api.h>
+#include <mbed-net-socket-abstract/socket_types.h>
 
 const struct socket_api * socket_api_ptrs[SOCKET_MAX_STACKS] = {NULL};
 
