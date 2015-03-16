@@ -22,6 +22,22 @@ const char * socket_strerror(socket_error_t err)
       return "Memory allocation failed";
     case SOCKET_ERROR_NO_CONNECTION:
       return "Socket not connected";
+    case SOCKET_ERROR_UNIMPLEMENTED:
+        return "API Functions not implemented";
+    case SOCKET_ERROR_SIZE:
+        return "Zero length not permitted";
+    case SOCKET_ERROR_STACK_EXISTS:
+        return "Socket Stack already registered";
+    case SOCKET_ERROR_STACKS:
+        return "attempt to register too many socket stacks";
+    case SOCKET_ERROR_BAD_STACK:
+        return "socket stack has incomplete API";
+    case SOCKET_ERROR_DNS_FAILED:
+        return "DNS lookup failed";
+    case SOCKET_ERROR_WOULD_BLOCK:
+        return "No data available";
+    case SOCKET_ERROR_CLOSED:
+        return "Attempt to perform an operation on a closed socket";
     default:
       return "Unknown error";
   }
