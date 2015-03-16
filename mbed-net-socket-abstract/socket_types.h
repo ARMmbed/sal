@@ -1,5 +1,5 @@
-#ifndef LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
-#define LIBRARIES_MBED_HAL_SOCKET_TYPES_H_
+#ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
+#define __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
 
 #include <stddef.h>
 #include <stdint.h>
@@ -8,9 +8,14 @@
 extern "C" {
 #endif
 
+#ifndef MBED_NET_LWIP
+#define MBED_NET_LWIP 1
+#endif
+
 typedef enum {
     SOCKET_ERROR_NONE = 0,
     SOCKET_ERROR_UNKNOWN,
+    SOCKET_ERROR_UNIMPLEMENTED,
     SOCKET_ERROR_BUSY,
     SOCKET_ERROR_NULL_PTR,
     SOCKET_ERROR_BAD_FAMILY,
@@ -24,6 +29,8 @@ typedef enum {
     SOCKET_ERROR_BAD_STACK,
     SOCKET_ERROR_BAD_ADDRESS,
     SOCKET_ERROR_DNS_FAILED,
+    SOCKET_ERROR_WOULD_BLOCK,
+    SOCKET_ERROR_CLOSED,
 
 } socket_error_t;
 
@@ -32,12 +39,16 @@ typedef enum {
     SOCKET_ALLOC_POOL_BEST,
 } socket_alloc_pool_t;
 
-//typedef enum {
-//    // TBD
-//} socket_flags_t;
+typedef enum {
+    SOCKET_AF_UNINIT,
+    SOCKET_AF_INET4,
+    SOCKET_AF_INET6,
+    SOCKET_AF_INVALID,
+} socket_address_family_t;
 
 typedef enum {
-    SOCKET_DGRAM = 1,
+	SOCKET_PROTO_UNINIT = 0,
+    SOCKET_DGRAM,
     SOCKET_STREAM,
     SOCKET_RAW,
 } socket_proto_family_t;
@@ -52,13 +63,15 @@ typedef enum {
     SOCKET_EVENT_CONNECT,
     SOCKET_EVENT_DISCONNECT,
     SOCKET_EVENT_DNS,
+    SOCKET_EVENT_ACCEPT,
 } event_flag_t;
 
 typedef enum {
-    SOCKET_STATUS_IDLE = 0,
-    SOCKET_STATUS_RX_BUSY = 1 << 0,
-    SOCKET_STATUS_TX_BUSY = 1 << 1,
+    SOCKET_STATUS_IDLE      = 0,
+    SOCKET_STATUS_RX_BUSY   = 1 << 0,
+    SOCKET_STATUS_TX_BUSY   = 1 << 1,
     SOCKET_STATUS_CONNECTED = 1 << 2,
+    SOCKET_STATUS_BOUND     = 1 << 3,
 } socket_status_t;
 
 typedef enum {
@@ -67,6 +80,7 @@ typedef enum {
     SOCKET_STACK_LWIP_IPV6,
     SOCKET_STACK_RESERVED,
     SOCKET_STACK_NANOSTACK_IPV6,
+    SOCKET_STACK_PICOTCP,
     SOCKET_STACK_MAX,
 } socket_stack_t;
 
@@ -76,74 +90,6 @@ typedef enum {
     SOCKET_BUFFER_LWIP_PBUF,
     SOCKET_BUFFER_NANOSTACK_PBUF,
 } socket_buffer_type_t;
-
-struct socket_addr {
-    socket_stack_t type;
-    void *impl;
-};
-
-struct socket_buffer {
-    socket_buffer_type_t type;
-    uint32_t flags;
-    const struct socket_buf_api *api;
-    void *impl;
-};
-
-struct socket_rawbuf {
-    void * buf;
-    size_t size;
-    size_t pos;
-};
-
-typedef void (*socket_api_handler_t)(void);
-typedef struct {
-    void * (*alloc)(void *,const size_t);
-    void (*dealloc)(void *, void *);
-    void *context;
-} socket_allocator_t;
-
-struct socket_recv_info {
-    void *context;
-    struct socket *sock;
-    struct socket_addr src;
-    uint16_t port;
-    struct socket_buffer buf;
-    uint8_t free_buf;
-};
-
-struct socket_tx_info {
-    void *context;
-    struct socket *sock;
-    struct socket_buffer *buf;
-    uint16_t sentbytes;
-    uint8_t free_buf;
-};
-
-struct socket_dns_info {
-  struct socket *sock;
-  struct socket_addr addr; // A stack-specific socket address struct
-  const char *domain;
-};
-struct socket_event {
-    event_flag_t event;
-    union {
-        struct socket_recv_info r;
-        struct socket_tx_info t;
-        socket_error_t e;
-        struct socket_dns_info d;
-    } i;
-};
-typedef struct socket_event socket_event_t;
-
-struct socket {
-    void *handler;
-    socket_status_t status;
-    uint8_t family;
-    socket_event_t *event; // TODO: (CThunk upgrade/Alpha2)
-    socket_stack_t stack;
-    const struct socket_api *api;
-    void *impl;
-};
 
 // TODO: The type of handler_t is TBD.
 // NOTE: Since handlers are passed using C++ references, a global null handler will be provided so that empty handlers
@@ -164,7 +110,69 @@ struct socket {
  */
 typedef void (*handler_t)(void *);
 
+
+struct socket_addr {
+    socket_stack_t type;
+	uint32_t storage[4];
+};
+
+struct socket_buffer {
+    socket_buffer_type_t type;
+    const struct socket_buf_api *api;
+    void *impl;
+};
+
+struct socket_rawbuf {
+    void * buf;
+    size_t size;
+    size_t pos;
+};
+
+typedef void (*socket_api_handler_t)(void);
+typedef struct {
+    void * (*alloc)(void *,const size_t);
+    void (*dealloc)(void *, void *);
+    void *context;
+} socket_allocator_t;
+
+struct socket_tx_info {
+    uint16_t sentbytes;
+};
+
+struct socket_dns_info {
+  struct socket_addr addr; // A stack-specific socket address struct
+  const char *domain;
+};
+
+struct socket_accept_info {
+    void * newimpl;
+    uint8_t reject;
+};
+
+struct socket_event {
+    event_flag_t event;
+    struct socket *sock;
+    union {
+        struct socket_tx_info t;
+        socket_error_t e;
+        struct socket_dns_info d;
+        struct socket_accept_info a;
+    } i;
+};
+typedef struct socket_event socket_event_t;
+
+struct socket {
+    socket_api_handler_t handler;
+    socket_event_t *event; // TODO: (CThunk upgrade/Alpha3)
+    const struct socket_api *api;
+    void *impl;
+    socket_status_t status;
+    uint8_t family;
+    socket_stack_t stack;
+    void *rxBufChain; // TODO: Only required in some stacks, which do not support BSD-style buffering
+};
+
 #ifdef __cplusplus
 }
 #endif
-#endif /* LIBRARIES_MBED_HAL_SOCKET_TYPES_H_ */
+#endif /* __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__ */
