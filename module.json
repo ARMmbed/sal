@@ -16,7 +16,7 @@
     },
     "targetDependencies": {
       "lwip-k64f":{
-        "mbed-net-lwip":"ARMmbed/mbed-net-lwip"
+        "mbed-net-lwip":"ARMmbed/mbed-net-lwip#~0.0.2"
       },
       "picotcp":{
         "mbed-net-picotcp-wrapper":"ARMmbed/mbed-net-picotcp-wrapper"
