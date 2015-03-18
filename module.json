@@ -1,25 +1,22 @@
-
 {
-    "name": "mbed-net-socket-abstract",
-    "version": "0.0.1",
-    "description": "C Socket abstraction layer",
-    "keywords": [
-    ],
-    "author": "name <email@arm.com>",
-    "repository": {
-        "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
-        "type": "git"
+  "name": "mbed-net-socket-abstract",
+  "version": "0.0.2",
+  "description": "C Socket abstraction layer",
+  "keywords": [],
+  "author": "name <email@arm.com>",
+  "repository": {
+    "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
+  "license": "Apache-2",
+  "dependencies": {},
+  "targetDependencies": {
+    "lwip-k64f": {
+      "mbed-net-lwip": "ARMmbed/mbed-net-lwip#~0.0.2"
     },
-    "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
-    "license": "Apache-2",
-    "dependencies": {
-    },
-    "targetDependencies": {
-      "lwip-k64f":{
-        "mbed-net-lwip":"ARMmbed/mbed-net-lwip#~0.0.2"
-      },
-      "picotcp":{
-        "mbed-net-picotcp-wrapper":"ARMmbed/mbed-net-picotcp-wrapper"
-      }
+    "picotcp": {
+      "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"
     }
+  }
 }
