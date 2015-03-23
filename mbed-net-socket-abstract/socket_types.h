@@ -58,14 +58,14 @@ typedef enum {
     SOCKET_AF_UNINIT,
     SOCKET_AF_INET4,
     SOCKET_AF_INET6,
-    SOCKET_AF_INVALID,
+    SOCKET_AF_MAX,
 } socket_address_family_t;
 
 typedef enum {
 	SOCKET_PROTO_UNINIT = 0,
     SOCKET_DGRAM,
     SOCKET_STREAM,
-    SOCKET_RAW,
+    SOCKET_PROTO_MAX,
 } socket_proto_family_t;
 
 typedef enum {
