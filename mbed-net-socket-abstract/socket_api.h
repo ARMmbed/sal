@@ -62,6 +62,7 @@ typedef socket_error_t (*socket_bind)(struct socket *socket, const struct socket
 typedef socket_error_t (*socket_str2addr)(const struct socket *socket, struct socket_addr *addr, const char *address);
 typedef socket_error_t (*socket_start_listen)(struct socket *socket, const uint32_t backlog);
 typedef socket_error_t (*socket_stop_listen)(struct socket *socket);
+typedef socket_error_t (*socket_accept)(struct socket *sock, socket_api_handler_t handler);
 //typedef socket_error_t (*socket_start_send)(struct socket *socket, struct socket_buffer *buf);
 //typedef socket_error_t (*socket_start_sendv)(struct socket *socket, void *buf, size_t len);
 //typedef socket_error_t (*socket_start_recv)(struct socket *socket);
@@ -92,6 +93,7 @@ struct socket_api {
     socket_bind                 bind;
     socket_start_listen         start_listen;
     socket_stop_listen          stop_listen;
+    socket_accept               accept;
 //    socket_start_send           start_send;
 //    socket_start_sendv          start_sendv;
 //    socket_start_recv           start_recv;
