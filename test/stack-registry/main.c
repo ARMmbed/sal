@@ -3,9 +3,9 @@
  * Copyright 2015 ARM Holdings PLC
  */
 
-#include <mbed-net-socket-abstract/socket_api.h>
 #include <stdio.h>
-#include "../source/test/ctest_env.h"
+#include <mbed-net-socket-abstract/socket_api.h>
+#include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <string.h>
 
 #define TEST_PRINT(S,...) printf((S),__VA_ARGS__)
@@ -18,12 +18,12 @@
 struct socket_api test_api[SOCKET_MAX_STACKS+1];
 struct socket_api expect_fail_api;
 
-int test_pass_global = 1;
 
 int test_socket_stack_registry() {
     unsigned int i;
     socket_error_t err = SOCKET_ERROR_NONE;
     printf("Testing stack registry...\n");
+    TEST_CLEAR();
 
     // Try to register a stack marked as Uninitialized
     expect_fail_api.stack = SOCKET_STACK_UNINIT;

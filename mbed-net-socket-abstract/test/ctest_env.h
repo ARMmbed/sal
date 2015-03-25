@@ -26,6 +26,7 @@
 extern "C"
 #endif
 void cnotify_completion(int fail);
+static int test_pass_global = 1;
 
 #
 #endif /* STACK_REGISTRY_CTEST_ENV_H_ */
