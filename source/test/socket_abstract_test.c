@@ -20,11 +20,6 @@
 
 static int test_pass_global;
 
-int socket_api_test_init(const struct socket_api * api)
-{
-    return api->init() == SOCKET_ERROR_NONE;
-}
-
 static void create_test_handler(void) {
 
 }
@@ -73,9 +68,9 @@ int socket_api_test_create_destroy(socket_stack_t stack, socket_address_family_t
             err = api->create(&s, af, pf, NULL);
             TEST_NEQ(err, SOCKET_ERROR_NONE);
             TEST_EQ(s.impl, NULL);
-            // Destroy the socket;
+            // Destroy the socket (since creation will have failed, a null pointer is expected);
             err = api->destroy(&s);
-            TEST_EQ(err, SOCKET_ERROR_NONE);
+            TEST_EQ(err, SOCKET_ERROR_NULL_PTR);
             // Try destroying a socket that hasn't been created
             s.impl = NULL;
             err = api->destroy(&s);
@@ -89,7 +84,4 @@ int socket_api_test_create_destroy(socket_stack_t stack, socket_address_family_t
     }
     return TEST_RESULT();
 }
-
-
-
 
