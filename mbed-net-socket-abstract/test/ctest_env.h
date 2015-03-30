@@ -13,9 +13,9 @@
 
 #define TEST_PRINT(S,...) printf((S),__VA_ARGS__)
 #define TEST_EQ(A,B)\
-    ((A!=B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "!=" #B " in %s [FAIL]\r\n", __FILE__, __LINE__, __func__),0):1)
+    ((A!=B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "!=" #B " [FAIL]\r\n", __func__, __LINE__),0):1)
 #define TEST_NEQ(A,B)\
-    ((A==B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "==" #B " in %s [FAIL]\r\n", __FILE__, __LINE__, __func__),0):1)
+    ((A==B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "==" #B " [FAIL]\r\n", __func__, __LINE__),0):1)
 
 #define TEST_CLEAR()\
     (test_pass_global = 1, 0)
