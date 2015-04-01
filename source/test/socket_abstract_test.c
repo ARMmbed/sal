@@ -85,3 +85,43 @@ int socket_api_test_create_destroy(socket_stack_t stack, socket_address_family_t
     return TEST_RESULT();
 }
 
+int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t disable_family)
+{
+    struct socket s;
+    socket_address_family_t af;
+    socket_proto_family_t pf;
+    socket_error_t err;
+    const struct socket_api * api = socket_get_api(stack);
+    TEST_CLEAR();
+    if (!TEST_NEQ(api, NULL)) {
+        // Test cannot continue without API.
+        return 0;
+    }
+    err = api->init();
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        return 0;
+    }
+
+    // Create a socket for each address family
+    for (af = SOCKET_AF_UNINIT+1; af < SOCKET_AF_MAX; af++) {
+        // Create a socket for each protocol family
+        for (pf = SOCKET_PROTO_UNINIT+1; pf < SOCKET_PROTO_MAX; pf++) {
+            if (af == disable_family) {
+                continue;
+            }
+            // Zero the implementation
+            s.impl = NULL;
+            err = api->create(&s, af, pf, &create_test_handler);
+            // catch expected failing cases
+            TEST_EQ(err, SOCKET_ERROR_NONE);
+            if (!TEST_NEQ(s.impl, NULL)) {
+                continue;
+            }
+
+            // connect to a remote host
+
+            // close the connection
+
+            // reconnect to the remote host
+
+}
