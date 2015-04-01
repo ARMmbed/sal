@@ -1,7 +1,7 @@
 {
   "name": "mbed-net-socket-abstract",
-  "version": "0.0.2",
-  "private" : true,
+  "version": "0.0.3",
+  "private": true,
   "description": "C Socket abstraction layer",
   "keywords": [],
   "author": "name <email@arm.com>",
