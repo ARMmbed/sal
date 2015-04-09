@@ -1,6 +1,6 @@
 {
   "name": "mbed-net-socket-abstract",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "C Socket abstraction layer",
   "keywords": [],
   "author": "name <email@arm.com>",
@@ -13,7 +13,7 @@
   "dependencies": {},
   "targetDependencies": {
     "lwip-k64f": {
-      "mbed-net-lwip": "ARMmbed/mbed-net-lwip#~0.0.2"
+      "mbed-net-lwip": "ARMmbed/mbed-net-lwip#~0.0.3"
     },
     "picotcp": {
       "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"

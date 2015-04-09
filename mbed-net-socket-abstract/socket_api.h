@@ -17,6 +17,7 @@
 #ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 #define __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 
+#include <stdint.h>
 #include "socket_types.h"
 #ifdef __cplusplus
 extern "C" {
@@ -59,8 +60,9 @@ typedef socket_error_t (*socket_resolve)(struct socket *socket, const char *addr
 typedef socket_error_t (*socket_connect)(struct socket *sock, const struct socket_addr *address, const uint16_t port);
 typedef socket_error_t (*socket_bind)(struct socket *socket, const struct socket_addr *address, const uint16_t port);
 typedef socket_error_t (*socket_str2addr)(const struct socket *socket, struct socket_addr *addr, const char *address);
-typedef socket_error_t (*socket_start_listen)(struct socket *socket, const struct socket_addr *address, const uint16_t port, socket_api_handler_t const handler);
+typedef socket_error_t (*socket_start_listen)(struct socket *socket, const uint32_t backlog);
 typedef socket_error_t (*socket_stop_listen)(struct socket *socket);
+typedef socket_error_t (*socket_accept)(struct socket *sock, socket_api_handler_t handler);
 //typedef socket_error_t (*socket_start_send)(struct socket *socket, struct socket_buffer *buf);
 //typedef socket_error_t (*socket_start_sendv)(struct socket *socket, void *buf, size_t len);
 //typedef socket_error_t (*socket_start_recv)(struct socket *socket);
@@ -89,8 +91,9 @@ struct socket_api {
     socket_connect              connect;
     socket_str2addr             str2addr;
     socket_bind                 bind;
-//    socket_start_listen         start_listen;
-//    socket_stop_listen          stop_listen;
+    socket_start_listen         start_listen;
+    socket_stop_listen          stop_listen;
+    socket_accept               accept;
 //    socket_start_send           start_send;
 //    socket_start_sendv          start_sendv;
 //    socket_start_recv           start_recv;
