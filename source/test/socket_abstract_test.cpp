@@ -262,3 +262,144 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
     }
     TEST_RETURN();
 }
+
+/**
+ * Tests the following APIs:
+ * create
+ * connect
+ * send
+ * recv
+ * close
+ * destroy
+ *
+ * @param stack
+ * @param disable_family
+ * @param server
+ * @param port
+ * @return
+ */
+
+int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
+{
+    struct socket s;
+    socket_error_t err;
+    int afi;
+    struct socket_api *api = socket_get_api(stack);
+    // Create the socket
+    TEST_CLEAR();
+    if (!TEST_NEQ(api, NULL)) {
+        // Test cannot continue without API.
+        return 0;
+    }
+    err = api->init();
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        return 0;
+    }
+
+    // Create a socket for each address family
+    for (afi = SOCKET_AF_UNINIT+1; afi < SOCKET_AF_MAX; afi++) {
+        socket_address_family_t af = static_cast<socket_address_family_t>(afi);
+        if (af == disable_family) {
+            continue;
+        }
+        // Create a socket for each protocol family
+        for (pfi = SOCKET_PROTO_UNINIT+1; pfi < SOCKET_PROTO_MAX; pfi++) {
+            socket_proto_family_t pf = static_cast<socket_proto_family_t>(pfi);
+            // Zero the implementation
+            s.impl = NULL;
+            err = api->create(&s, af, pf, &connect_close_handler);
+    // Connect to a host
+    // For several iterations
+        // Format some data into a buffer
+        // Send the data
+        // Receive data back
+        // Validate that the two buffers are the same
+    // close the socket
+    // wait for onClose
+    // destroy the socket
+}
+
+int socket_api_test_echo_client_unconnected(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
+{
+
+    // Create the socket
+    // For several iterations
+        // Format some data into a buffer
+        // Send the data
+            // Check for failure if it's a TCP socket
+        // Receive data back
+            // Check for failure if it's a TCP socket
+        // Validate that the two buffers are the same
+    // close the socket
+    // destroy the socket
+}
+
+int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
+{
+    // Create the socket
+    // For several iterations
+        // Listen for incoming connections
+        // Accept an incoming connection
+        // Stop listening
+            // Client should test for successive connections being rejected
+        // Until Client disconnects
+            // Receive some data
+            // Send some data
+        // Close client socket
+    // Destroy server socket
+}
+
+int socket_api_test_echo_server_dgram(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
+{
+    // Create the socket
+    // For several iterations
+        // Receive some data
+        // Send some data
+    // Destroy server socket
+}
+
+
+
+//[OK] //socket_init                 init;
+//[OK] //socket_create               create;
+//[OK] //socket_destroy              destroy;
+//[OK] //socket_close                close;
+//[NT] //socket_periodic_task        periodic_task;
+//[NT] //socket_periodic_interval    periodic_interval;
+//[HL] //socket_resolve              resolve;
+//[OK] //socket_connect              connect;
+//[OK] //socket_str2addr             str2addr;
+
+// Remaining tests could be wrapped in two classes of test application:
+// Echo Server
+// Echo Client
+
+// Tested in parallel with listen?
+//socket_bind                 bind;
+
+// Connection attempts arrive?
+//socket_start_listen         start_listen;
+
+// Connections are rejected?
+//socket_stop_listen          stop_listen;
+
+// Connection attempts are accepted?
+//socket_accept               accept;
+
+// Data is sent on connected socket
+//socket_send                 send;
+
+// Data is sent on unconnected socket
+//socket_send_to              send_to;
+
+// Data is received on connected socket
+//socket_recv                 recv;
+
+// Data is received on unconnected socket
+//socket_recv_from            recv_from;
+
+// Valid state is returned for connected
+//socket_is_connected         is_connected;
+
+// Valid state is returned for bound
+//socket_is_bound             is_bound;
