@@ -22,6 +22,15 @@
 
 #define TEST_RESULT()\
     (test_pass_global)
+
+#define TEST_RETURN()\
+    do {\
+        if(TEST_RESULT()) {\
+            TEST_PRINT("%s [PASS]\r\n", __func__);\
+        }\
+        return TEST_RESULT();\
+    }while (0)
+
 #ifdef __cplusplus
 extern "C"
 #endif

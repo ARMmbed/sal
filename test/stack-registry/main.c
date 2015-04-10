@@ -8,13 +8,6 @@
 #include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <string.h>
 
-#define TEST_PRINT(S,...) printf((S),__VA_ARGS__)
-#define TEST_EQ(A,B)\
-    ((A!=B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "!=" #B " in %s [FAIL]\r\n", __FILE__, __LINE__, __func__),0):1)
-#define TEST_NEQ(A,B)\
-    ((A==B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "==" #B " in %s [FAIL]\r\n", __FILE__, __LINE__, __func__),0):1)
-
-
 struct socket_api test_api[SOCKET_MAX_STACKS+1];
 struct socket_api expect_fail_api;
 

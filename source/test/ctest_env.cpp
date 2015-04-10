@@ -7,6 +7,7 @@
 #include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <mbed/test_env.h>
 void cnotify_completion(int fail) {
+    (void) test_pass_global;
     notify_completion(fail != 0);
 }
 

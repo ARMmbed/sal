@@ -23,7 +23,8 @@ extern "C" {
 #endif
 
 int socket_api_test_create_destroy(socket_stack_t stack, socket_address_family_t disable_family);
-
+int socket_api_test_socket_str2addr(socket_stack_t stack, socket_address_family_t disable_family);
+int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port);
 
 #ifdef __cplusplus
 }
