@@ -49,8 +49,8 @@ struct socket_buf_api {
 
 typedef socket_error_t (*socket_init)();
 typedef socket_error_t (*socket_create)(struct socket *socket,
-		const socket_address_family_t af, const socket_proto_family_t pf,
-		socket_api_handler_t const handler);
+        const socket_address_family_t af, const socket_proto_family_t pf,
+        socket_api_handler_t const handler);
 typedef socket_error_t (*socket_destroy)(struct socket *socket);
 typedef socket_error_t (*socket_close)(struct socket *socket);
 //typedef void (*socket_abort)(struct socket *socket);
