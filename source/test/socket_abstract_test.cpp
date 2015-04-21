@@ -263,6 +263,56 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
     TEST_RETURN();
 }
 
+
+static volatile bool blocking_resolve_done;
+static volatile socket_error_t blocking_resolve_err;
+static volatile struct socket *blocking_resolve_socket;
+static volatile struct socket_addr blocking_resolve_addr;
+static volatile const char * blocking_resolve_domain;
+
+static void blocking_resolve_cb()
+{
+    struct socket_event *e = blocking_resolve_socket->event;
+    if (e->event == SOCKET_EVENT_ERROR) {
+        blocking_resolve_err = e->i.e;
+        blocking_resolve_done = true;
+        return;
+    } else if (e->event == SOCKET_EVENT_DNS) {
+        blocking_resolve_addr = e->i.d.addr;
+        blocking_resolve_domain = e->i.d.domain;
+        blocking_resolve_err = SOCKET_ERROR_NONE;
+        blocking_resolve_done = true;
+    } else {
+        blocking_resolve_err = SOCKET_ERROR_UNKNOWN;
+        blocking_resolve_done = true;
+        return;
+    }
+}
+
+socket_error_t blocking_resolve(const socket_stack_t stack, const socket_address_family_t af, const char* server, struct socket_addr * addr) {
+    struct socket s;
+    struct socket_api *api = socket_get_api(stack);
+    blocking_resolve_socket = &s;
+    s.stack = stack;
+    s.handler = blocking_resolve_cb;
+    s.api = api;
+    blocking_resolve_done = false;
+    socket_error_t err = api->resolve(&s, server);
+    if(!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        return err;
+    }
+    while (!blocking_resolve_done) {
+        __WFI();
+    }
+    if(!TEST_EQ(blocking_resolve_err, SOCKET_ERROR_NONE)) {
+        return blocking_resolve_err;
+    }
+    int rc = strcmp(addr, blocking_resolve_domain);
+    TEST_EQ(rc,0);
+    *addr = *blocking_resolve_addr;
+    return SOCKET_ERROR_NONE;
+}
+
 /**
  * Tests the following APIs:
  * create
@@ -278,13 +328,18 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
  * @param port
  * @return
  */
+static struct socket *client_socket;
+static void client_cb() {
+    struct socket_event *e = client_socket->event;
 
+}
 int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
 {
     struct socket s;
     socket_error_t err;
-    int afi;
+    int afi, pfi;
     struct socket_api *api = socket_get_api(stack);
+    client_socket = &s;
     // Create the socket
     TEST_CLEAR();
     if (!TEST_NEQ(api, NULL)) {
@@ -299,7 +354,13 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     // Create a socket for each address family
     for (afi = SOCKET_AF_UNINIT+1; afi < SOCKET_AF_MAX; afi++) {
         socket_address_family_t af = static_cast<socket_address_family_t>(afi);
+        struct socket_addr addr;
         if (af == disable_family) {
+            continue;
+        }
+        // Resolve the host address
+        err = blocking_resolve(stack, af, server, &addr);
+        if(!TEST_EQ(err, SOCKET_ERROR_NONE)) {
             continue;
         }
         // Create a socket for each protocol family
@@ -307,8 +368,13 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
             socket_proto_family_t pf = static_cast<socket_proto_family_t>(pfi);
             // Zero the implementation
             s.impl = NULL;
-            err = api->create(&s, af, pf, &connect_close_handler);
-    // Connect to a host
+            err = api->create(&s, af, pf, &client_cb);
+            if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+                continue;
+            }
+            // Connect to a host
+            err = api->connect(&s, &addr, port);
+            TEST_EQ(err, SOCKET_ERROR_NONE)
     // For several iterations
         // Format some data into a buffer
         // Send the data
