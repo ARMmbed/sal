@@ -62,7 +62,7 @@ typedef enum {
 } socket_address_family_t;
 
 typedef enum {
-	SOCKET_PROTO_UNINIT = 0,
+    SOCKET_PROTO_UNINIT = 0,
     SOCKET_DGRAM,
     SOCKET_STREAM,
     SOCKET_RAW,
@@ -108,7 +108,7 @@ typedef enum {
 
 struct socket_addr {
     socket_stack_t type;
-	uint32_t storage[4];
+    uint32_t storage[4];
 };
 
 struct socket_buffer {
