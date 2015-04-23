@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TEST_PRINT(S,...) printf((S),__VA_ARGS__)
+#define TEST_PRINT(...) printf(__VA_ARGS__)
 #define TEST_EQ(A,B)\
     ((A!=B)?(test_pass_global = 0, TEST_PRINT("%s:%d " #A "!=" #B " [FAIL]\r\n", __func__, __LINE__),0):1)
 #define TEST_NEQ(A,B)\
@@ -25,9 +25,7 @@
 
 #define TEST_RETURN()\
     do {\
-        if(TEST_RESULT()) {\
-            TEST_PRINT("%s [PASS]\r\n", __func__);\
-        }\
+        TEST_PRINT("%s [%s]\r\n", __func__, (TEST_RESULT()?"PASS":"FAIL"));\
         return TEST_RESULT();\
     }while (0)
 
