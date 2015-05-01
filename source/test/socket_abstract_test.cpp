@@ -19,10 +19,15 @@
 #include <mbed-net-socket-abstract/socket_api.h>
 #include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <mbed/Timeout.h>
+#include <mbed/Ticker.h>
 #include <mbed/mbed.h>
 
 #ifndef SOCKET_TEST_TIMEOUT
 #define SOCKET_TEST_TIMEOUT 1.0f
+#endif
+
+#ifndef SOCKET_TEST_SERVER_TIMEOUT
+#define SOCKET_TEST_SERVER_TIMEOUT 10.0f
 #endif
 
 #ifndef SOCKET_SENDBUF_BLOCKSIZE
@@ -190,11 +195,11 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
     TEST_CLEAR();
     if (!TEST_NEQ(api, NULL)) {
         // Test cannot continue without API.
-        return 0;
+        TEST_RETURN();
     }
     err = api->init();
     if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-        return 0;
+        TEST_RETURN();
     }
 
     // Create a socket for each address family
@@ -214,6 +219,8 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
             if (!TEST_NEQ(s.impl, NULL)) {
                 continue;
             }
+            // Tell the host launch a server
+            TEST_PRINT(">>> ES,%d\r\n", pf);
 
             // connect to a remote host
             err = api->str2addr(&s, &addr, server);
@@ -268,6 +275,9 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
             }
             to.detach();
             TEST_EQ(timedout, 0);
+            // Tell the host to kill the server
+            TEST_PRINT(">>> KILL ES\r\n");
+
             // Destroy the socket
             err = api->destroy(&s);
             TEST_EQ(err, SOCKET_ERROR_NONE);
@@ -381,28 +391,33 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     // Create the socket
     TEST_CLEAR();
     TEST_PRINT("\r\n%s af: %d, pf: %d, connect: %d, server: %s:%d\r\n",__func__, (int) af, (int) pf, (int) connect, server, (int) port);
+
     if (!TEST_NEQ(api, NULL)) {
         // Test cannot continue without API.
-        return 0;
+        TEST_RETURN();
     }
     err = api->init();
     if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-        return 0;
+        TEST_RETURN();
     }
 
     struct socket_addr addr;
     // Resolve the host address
     err = blocking_resolve(stack, af, server, &addr);
     if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-        return 0;
+        TEST_RETURN();
     }
+    // Tell the host launch a server
+    TEST_PRINT(">>> ES,%d\r\n", pf);
+    // Allocate a data buffer for tx/rx
+    void *data = malloc(SOCKET_SENDBUF_MAXSIZE);
 
     // Zero the socket implementation
     s.impl = NULL;
     // Create a socket
     err = api->create(&s, af, pf, &client_cb);
     if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-        return 0;
+        TEST_EXIT();
     }
     // Connect to a host
     if (connect) {
@@ -411,7 +426,7 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
         to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
         err = api->connect(&s, &addr, port);
         if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-            return 0;
+            TEST_EXIT();
         }
         // Override event for dgrams.
         if (pf == SOCKET_DGRAM) {
@@ -425,13 +440,10 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
 
         // Make sure that the correct event occurred
         if (!TEST_EQ(client_event.event, SOCKET_EVENT_CONNECT)) {
-            return 0;
+            TEST_EXIT();
         }
         to.detach();
     }
-
-    // Allocate a data buffer for tx/rx
-    void *data = malloc(SOCKET_SENDBUF_MAXSIZE);
 
     // For several iterations
     for (size_t i = 0; i < SOCKET_SENDBUF_ITERATIONS; i++) {
@@ -561,97 +573,181 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     err = api->destroy(&s);
     TEST_EQ(err, SOCKET_ERROR_NONE);
 
+test_exit:
+    TEST_PRINT(">>> KILL,ES\r\n");
     free(data);
     TEST_RETURN();
 }
 
-//int socket_api_test_echo_client_unconnected(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
-//{
-//
-//    // Create the socket
-//    // For several iterations
-//        // Format some data into a buffer
-//        // Send the data
-//            // Check for failure if it's a TCP socket
-//        // Receive data back
-//            // Check for failure if it's a TCP socket
-//        // Validate that the two buffers are the same
-//    // close the socket
-//    // destroy the socket
-//    TEST_RETURN();
-//
-//}
-//
-//int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
-//{
-//    // Create the socket
-//    // For several iterations
-//        // Listen for incoming connections
-//        // Accept an incoming connection
-//        // Stop listening
-//            // Client should test for successive connections being rejected
-//        // Until Client disconnects
-//            // Receive some data
-//            // Send some data
-//        // Close client socket
-//    // Destroy server socket
-//    TEST_RETURN();
-//
-//}
-//
-//int socket_api_test_echo_server_dgram(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
-//{
-//    // Create the socket
-//    // For several iterations
-//        // Receive some data
-//        // Send some data
-//    // Destroy server socket
-//    TEST_RETURN();
-//
-//}
 
+static volatile bool incoming;
+static volatile bool server_event_done;
+static volatile struct socket *server_socket;
+static volatile struct socket_event server_event;
+static void server_cb(void)
+{
+    struct socket_event *e = server_socket->event;
+    event_flag_t event = e->event;
+    switch (event) {
+        case SOCKET_EVENT_ACCEPT:
+            incoming = true;
+            server_event.event = event;
+            server_event.i.a.newimpl = e->i.a.newimpl;
+            e->i.a.reject = 0;
+            break;
+        default:
+            server_event_done = true;
+            break;
+    }
+}
 
+int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_family_t af, const char* local_addr, uint16_t port)
+{
+    struct socket s;
+    struct socket cs;
+    struct socket_addr addr;
+    socket_error_t err;
+    const struct socket_api *api = socket_get_api(stack);
+    server_socket = &s;
+    client_socket = &cs;
+    mbed::Timeout to;
+    mbed::Ticker ticker;
+    // Create the socket
+    TEST_CLEAR();
 
-//[OK] //socket_init                 init;
-//[OK] //socket_create               create;
-//[OK] //socket_destroy              destroy;
-//[OK] //socket_close                close;
-//[NT] //socket_periodic_task        periodic_task;
-//[NT] //socket_periodic_interval    periodic_interval;
-//[HL] //socket_resolve              resolve;
-//[OK] //socket_connect              connect;
-//[OK] //socket_str2addr             str2addr;
+    if (!TEST_NEQ(api, NULL)) {
+        // Test cannot continue without API.
+        TEST_RETURN();
+    }
+    err = api->init();
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        TEST_RETURN();
+    }
 
-// Remaining tests could be wrapped in two classes of test application:
-// Echo Server
-// Echo Client
+    // Zero the socket implementation
+    s.impl = NULL;
+    // Create a socket
+    err = api->create(&s, af, SOCKET_STREAM, &server_cb);
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        TEST_RETURN();
+    }
 
-// Tested in parallel with listen?
-//socket_bind                 bind;
+    err = api->str2addr(&s, &addr, local_addr);
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        TEST_RETURN();
+    }
 
-// Connection attempts arrive?
-//socket_start_listen         start_listen;
+    // start the TCP timer
+    uint32_t interval_ms = api->periodic_interval(&s);
+    TEST_NEQ(interval_ms, 0);
+    uint32_t interval_us = interval_ms * 1000;
+    socket_api_handler_t periodic_task = api->periodic_task(&s);
+    if (TEST_NEQ(periodic_task, NULL)) {
+        ticker.attach_us(periodic_task, interval_us);
+    }
 
-// Connections are rejected?
-//socket_stop_listen          stop_listen;
+    err = api->bind(&s, &addr, port);
+    if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+        TEST_RETURN();
+    }
+    void *data = malloc(SOCKET_SENDBUF_MAXSIZE);
+    if(!TEST_NEQ(data, NULL)) {
+        TEST_RETURN();
+    }
+    // Tell the host test to try and connect
+    TEST_PRINT(">>> EC,%s,%d\r\n", local_addr, port);
 
-// Connection attempts are accepted?
-//socket_accept               accept;
+    bool quit = false;
+    // For several iterations
+    while (!quit) {
+        timedout = false;
+        server_event_done = false;
+        incoming = false;
+        to.attach(onTimeout, SOCKET_TEST_SERVER_TIMEOUT);
+        // Listen for incoming connections
+        err = api->start_listen(&s, 0);
+        if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+            TEST_EXIT();
+        }
+        // Reset the state of client_rx_done
+        client_rx_done = false;
+        // Wait for a connect event
+        while (!timedout && !incoming) {
+            __WFI();
+        }
+        if (TEST_EQ(timedout,0)) {
+            to.detach();
+        } else {
+            TEST_EXIT();
+        }
+        if(!TEST_EQ(server_event.event, SOCKET_EVENT_ACCEPT)) {
+            TEST_PRINT("Event: %d\r\n",(int)client_event.event);
+            continue;
+        }
+        // Stop listening
+        server_event_done = false;
+        // err = api->stop_listen(&s);
+        // TEST_EQ(err, SOCKET_ERROR_NONE);
+        // Accept an incoming connection
+        cs.impl = server_event.i.a.newimpl;
+        cs.family = s.family;
+        cs.stack  = s.stack;
+        err = api->accept(&cs, client_cb);
+        if(!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+            continue;
+        }
+        to.attach(onTimeout, SOCKET_TEST_SERVER_TIMEOUT);
 
-// Data is sent on connected socket
-//socket_send                 send;
+                    // Client should test for successive connections being rejected
+        // Until Client disconnects
+        while (client_event.event != SOCKET_EVENT_ERROR && client_event.event != SOCKET_EVENT_DISCONNECT) {
+            // Wait for a read event
+            while (!client_event_done && !client_rx_done && !timedout) {
+                __WFI();
+            }
+            if (!TEST_EQ(client_event_done, false)) {
+                client_event_done = false;
+                continue;
+            }
+            // Reset the state of client_rx_done
+            client_rx_done = false;
 
-// Data is sent on unconnected socket
-//socket_send_to              send_to;
+            // Receive some data
+            size_t len = SOCKET_SENDBUF_MAXSIZE;
+            err = api->recv(&cs, data, &len);
+            if (!TEST_NEQ(err, SOCKET_ERROR_WOULD_BLOCK)) {
+            	TEST_PRINT("Rx Would Block\r\n");
+            	continue;
+            }
+            if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+            	TEST_PRINT("err: (%d) %s\r\n", err, socket_strerror(err));
+                break;
+            }
 
-// Data is received on connected socket
-//socket_recv                 recv;
+            // Check if the server should halt
+            if (strncmp((const char *)data, "quit", 4) == 0) {
+                quit = true;
+                break;
+            }
+            // Send some data
+            err = api->send(&cs, data, len);
+            if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+                break;
+            }
+        }
+        to.detach();
+        TEST_NEQ(timedout, true);
 
-// Data is received on unconnected socket
-//socket_recv_from            recv_from;
-
-// Valid state is returned for connected
-//socket_is_connected         is_connected;
-
-// Valid state is returned for bound
-//socket_is_bound             is_bound;
+        // Close client socket
+        err = api->close(&cs);
+        TEST_EQ(err, SOCKET_ERROR_NONE);
+    }
+    err = api->stop_listen(&s);
+    TEST_EQ(err, SOCKET_ERROR_NONE);
+test_exit:
+    ticker.detach();
+    TEST_PRINT(">>> KILL,EC\r\n");
+    free(data);
+    // Destroy server socket
+    TEST_RETURN();
+}

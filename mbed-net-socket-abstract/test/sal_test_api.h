@@ -27,6 +27,8 @@ int socket_api_test_socket_str2addr(socket_stack_t stack, socket_address_family_
 int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port);
 int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_family_t af, socket_proto_family_t pf, bool connect,
         const char* server, uint16_t port);
+int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_family_t af, const char* local_addr, uint16_t port);
+
 
 
 #ifdef __cplusplus
