@@ -183,7 +183,7 @@ static void connect_close_handler(void)
     }
 }
 
-int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t disable_family, const char* server, uint16_t port)
+int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t af, const char* server, uint16_t port)
 {
     struct socket s;
     int afi, pfi;
@@ -202,87 +202,80 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
         TEST_RETURN();
     }
 
-    // Create a socket for each address family
-    for (afi = SOCKET_AF_UNINIT+1; afi < SOCKET_AF_MAX; afi++) {
-        socket_address_family_t af = static_cast<socket_address_family_t>(afi);
-        if (af == disable_family) {
-            continue;
-        }
-        // Create a socket for each protocol family
-        for (pfi = SOCKET_PROTO_UNINIT+1; pfi < SOCKET_PROTO_MAX; pfi++) {
-            socket_proto_family_t pf = static_cast<socket_proto_family_t>(pfi);
-            // Zero the implementation
-            s.impl = NULL;
-            err = api->create(&s, af, pf, &connect_close_handler);
-            // catch expected failing cases
-            TEST_EQ(err, SOCKET_ERROR_NONE);
-            if (!TEST_NEQ(s.impl, NULL)) {
-                continue;
-            }
-            // Tell the host launch a server
-            TEST_PRINT(">>> ES,%d\r\n", pf);
+	// Create a socket for each protocol family
+	for (pfi = SOCKET_PROTO_UNINIT+1; pfi < SOCKET_PROTO_MAX; pfi++) {
+		socket_proto_family_t pf = static_cast<socket_proto_family_t>(pfi);
+		// Zero the implementation
+		s.impl = NULL;
+		err = api->create(&s, af, pf, &connect_close_handler);
+		// catch expected failing cases
+		TEST_EQ(err, SOCKET_ERROR_NONE);
+		if (!TEST_NEQ(s.impl, NULL)) {
+			continue;
+		}
+		// Tell the host launch a server
+		TEST_PRINT(">>> ES,%d\r\n", pf);
 
-            // connect to a remote host
-            err = api->str2addr(&s, &addr, server);
-            TEST_EQ(err, SOCKET_ERROR_NONE);
+		// connect to a remote host
+		err = api->str2addr(&s, &addr, server);
+		TEST_EQ(err, SOCKET_ERROR_NONE);
 
-            timedout = 0;
-            connected = 0;
-            mbed::Timeout to;
-            to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
-            err = api->connect(&s, &addr, port);
-            TEST_EQ(err, SOCKET_ERROR_NONE);
-            if (err!=SOCKET_ERROR_NONE) {
-                printf("err = %d\r\n", err);
-            }
-            switch (pf) {
-            case SOCKET_DGRAM:
-                while ((!api->is_connected(&s)) && (!timedout)) {
-                    __WFI();
-                }
-                break;
-            case SOCKET_STREAM:
-                while (!connected && !timedout) {
-                    __WFI();
-                }
-                break;
-            default: break;
-            }
-            to.detach();
-            TEST_EQ(timedout, 0);
+		timedout = 0;
+		connected = 0;
+		mbed::Timeout to;
+		to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
+		err = api->connect(&s, &addr, port);
+		TEST_EQ(err, SOCKET_ERROR_NONE);
+		if (err!=SOCKET_ERROR_NONE) {
+			printf("err = %d\r\n", err);
+		}
+		switch (pf) {
+		case SOCKET_DGRAM:
+			while ((!api->is_connected(&s)) && (!timedout)) {
+				__WFI();
+			}
+			break;
+		case SOCKET_STREAM:
+			while (!connected && !timedout) {
+				__WFI();
+			}
+			break;
+		default: break;
+		}
+		to.detach();
+		TEST_EQ(timedout, 0);
 
-            // close the connection
-            timedout = 0;
-            closed = 0;
-            to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
-            err = api->close(&s);
-            TEST_EQ(err, SOCKET_ERROR_NONE);
-            if (err!=SOCKET_ERROR_NONE) {
-                printf("err = %d\r\n", err);
-            }
-            switch (pf) {
-                case SOCKET_DGRAM:
-                    while ((api->is_connected(&s)) && (!timedout)) {
-                        __WFI();
-                    }
-                    break;
-                case SOCKET_STREAM:
-                    while (!closed && !timedout) {
-                        __WFI();
-                    }
-                    break;
-                default: break;
-            }
-            to.detach();
-            TEST_EQ(timedout, 0);
-            // Tell the host to kill the server
-            TEST_PRINT(">>> KILL ES\r\n");
+		// close the connection
+		timedout = 0;
+		closed = 0;
+		to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
+		err = api->close(&s);
+		TEST_EQ(err, SOCKET_ERROR_NONE);
+		if (err!=SOCKET_ERROR_NONE) {
+			printf("err = %d\r\n", err);
+		}
+		switch (pf) {
+			case SOCKET_DGRAM:
+				while ((api->is_connected(&s)) && (!timedout)) {
+					__WFI();
+				}
+				break;
+			case SOCKET_STREAM:
+				while (!closed && !timedout) {
+					__WFI();
+				}
+				break;
+			default: break;
+		}
+		to.detach();
+		TEST_EQ(timedout, 0);
+		// Tell the host to kill the server
+		TEST_PRINT(">>> KILL ES\r\n");
 
-            // Destroy the socket
-            err = api->destroy(&s);
-            TEST_EQ(err, SOCKET_ERROR_NONE);
-        }
-    }
+		// Destroy the socket
+		err = api->destroy(&s);
+		TEST_EQ(err, SOCKET_ERROR_NONE);
+	}
     TEST_RETURN();
 }
 

@@ -5,8 +5,8 @@
  *      Author: bremor01
  */
 
-#ifndef STACK_REGISTRY_CTEST_ENV_H_
-#define STACK_REGISTRY_CTEST_ENV_H_
+#ifndef MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H_
+#define MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -29,7 +29,7 @@
     } while(0);
 #define TEST_RETURN()\
     do {\
-        TEST_PRINT("%s [%s] (%d/%d FAILED)\r\n", __func__, (TEST_RESULT()?"PASS":"FAIL"), tests_failed_global, tests_total_global);\
+        TEST_PRINT("{{summary %s [%s] (%d/%d FAILED)}}\r\n", __func__, (TEST_RESULT()?"PASS":"FAIL"), tests_failed_global, tests_total_global);\
         return TEST_RESULT();\
     }while (0)
 
@@ -37,4 +37,4 @@ static int test_pass_global = 1;
 static unsigned tests_failed_global = 0;
 static unsigned tests_total_global = 0;
 
-#endif /* STACK_REGISTRY_CTEST_ENV_H_ */
+#endif /* MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H_ */
