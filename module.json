@@ -2,8 +2,9 @@
   "name": "mbed-net-socket-abstract",
   "version": "0.1.1",
   "description": "C Socket abstraction layer",
+  "private": true,
   "keywords": [],
-  "author": "name <email@arm.com>",
+  "author": "Brendan Moran <brendan.moran@arm.com>",
   "repository": {
     "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
     "type": "git"
@@ -13,7 +14,7 @@
   "dependencies": {},
   "targetDependencies": {
     "lwip-k64f": {
-      "mbed-net-lwip": "ARMmbed/mbed-net-lwip#~0.1.0"
+      "mbed-net-lwip": "~0.1.2"
     },
     "picotcp": {
       "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"
