@@ -7,6 +7,7 @@
 #include <mbed-net-socket-abstract/socket_api.h>
 #include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <string.h>
+#include <mbed/test_env.h>
 
 struct socket_api test_api[SOCKET_MAX_STACKS+1];
 struct socket_api expect_fail_api;
@@ -88,14 +89,16 @@ int test_socket_stack_registry() {
         TEST_EQ(papi, &test_api[i]);
     }
 
-    return !test_pass_global;
+    return test_pass_global;
 }
 
 int main() {
     int rc;
-    printf("{{start}}\r\n");
+    MBED_HOSTTEST_SELECT(default);
+    MBED_HOSTTEST_TIMEOUT(1);
+    MBED_HOSTTEST_DESCRIPTION(Test the socket stack registry);
+    MBED_HOSTTEST_START("STACK_REGISTRY");
     rc = test_socket_stack_registry();
-    printf("{{%s}}\r\n", rc?"failure":"success");
-    printf("{{end}}\r\n");
+    MBED_HOSTTEST_RESULT(rc);
     return rc;
 }
