@@ -87,10 +87,14 @@ int test_socket_stack_registry() {
         TEST_EQ(papi, &test_api[i]);
     }
 
-    cnotify_completion(test_pass_global);
     return !test_pass_global;
 }
 
 int main() {
-    test_socket_stack_registry();
+    int rc;
+    printf("{{start}}\r\n");
+    rc = test_socket_stack_registry();
+    printf("{{%s}}\r\n", rc?"failure":"success");
+    printf("{{end}}\r\n");
+    return rc;
 }

@@ -12,6 +12,15 @@
   "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
   "license": "Apache-2",
   "dependencies": {},
+  "scripts": {
+    "testReporter": [
+      "mbedgt",
+      "--digest",
+      "stdin",
+      "-v",
+      "-V"
+    ]
+  },
   "targetDependencies": {
     "lwip-k64f": {
       "mbed-net-lwip": "~0.1.2"
