@@ -54,6 +54,20 @@ const char * socket_strerror(socket_error_t err)
             return "No data available";
         case SOCKET_ERROR_CLOSED:
             return "Attempt to perform an operation on a closed socket";
+        case SOCKET_ERROR_BAD_ADDRESS:
+            return "Invalid address format";
+        case SOCKET_ERROR_VALUE:
+            return "Invalid value";
+        case SOCKET_ERROR_ADDRESS_IN_USE:
+            return "Address in use";
+        case SOCKET_ERROR_ALREADY_CONNECTED:
+            return "Socket already connected";
+        case SOCKET_ERROR_ABORT:
+            return "Connection aborted";
+        case SOCKET_ERROR_BAD_ARGUMENT:
+            return "Invalid argument";
+        case SOCKET_ERROR_INTERFACE_ERROR:
+            return "Low-level interface error";
         default:
             return "Unknown error";
     }
