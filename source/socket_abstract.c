@@ -64,6 +64,8 @@ const char * socket_strerror(socket_error_t err)
             return "Socket already connected";
         case SOCKET_ERROR_ABORT:
             return "Connection aborted";
+        case SOCKET_ERROR_RESET:
+            return "Connection reset by peer";
         case SOCKET_ERROR_BAD_ARGUMENT:
             return "Invalid argument";
         case SOCKET_ERROR_INTERFACE_ERROR:
