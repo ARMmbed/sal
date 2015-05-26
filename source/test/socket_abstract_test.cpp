@@ -186,7 +186,7 @@ static void connect_close_handler(void)
 int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t af, const char* server, uint16_t port)
 {
     struct socket s;
-    int afi, pfi;
+    int pfi;
     socket_error_t err;
     const struct socket_api * api = socket_get_api(stack);
     struct socket_addr addr;
