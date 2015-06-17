@@ -33,8 +33,8 @@
         return TEST_RESULT();\
     }while (0)
 
-static int test_pass_global = 1;
-static unsigned tests_failed_global = 0;
-static unsigned tests_total_global = 0;
+volatile static int test_pass_global = 1;
+volatile static unsigned tests_failed_global = 0;
+volatile static unsigned tests_total_global = 0;
 
 #endif /* MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H_ */
