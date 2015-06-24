@@ -114,8 +114,7 @@ typedef enum {
 } socket_buffer_type_t;
 
 struct socket_addr {
-    socket_stack_t type;
-    uint32_t storage[4];
+    uint32_t ipv6be[4];
 };
 
 struct socket_buffer {

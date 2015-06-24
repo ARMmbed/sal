@@ -146,8 +146,8 @@ int socket_api_test_socket_str2addr(socket_stack_t stack, socket_address_family_
                 for (unsigned i = 0; i < nIPv4Entries; i++) {
                     err = api->str2addr(&s, &addr, IPv4_TestAddresses[i].test);
                     TEST_EQ(err, SOCKET_ERROR_NONE);
-                    if (!TEST_EQ(addr.storage[0], IPv4_TestAddresses[i].expect)) {
-                        printf ("Expected: %08lx, got: %08lx\r\n", IPv4_TestAddresses[i].expect,addr.storage[0]);
+                    if (!TEST_EQ(socket_addr_get_ipv4_addr(&addr), IPv4_TestAddresses[i].expect)) {
+                        printf ("Expected: %08lx, got: %08lx\r\n", IPv4_TestAddresses[i].expect,socket_addr_get_ipv4_addr(&addr));
                     }
                 }
                 break;
@@ -294,11 +294,7 @@ static void blocking_resolve_cb()
         blocking_resolve_done = true;
         return;
     } else if (e->event == SOCKET_EVENT_DNS) {
-        blocking_resolve_addr.type = e->i.d.addr.type;
-        blocking_resolve_addr.storage[0] = e->i.d.addr.storage[0];
-        blocking_resolve_addr.storage[1] = e->i.d.addr.storage[1];
-        blocking_resolve_addr.storage[2] = e->i.d.addr.storage[2];
-        blocking_resolve_addr.storage[3] = e->i.d.addr.storage[3];
+        socket_addr_copy(&blocking_resolve_addr, &e->i.d.addr);
         blocking_resolve_domain = e->i.d.domain;
         blocking_resolve_err = SOCKET_ERROR_NONE;
         blocking_resolve_done = true;
@@ -504,8 +500,7 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
                 memcpy(&rxaddr, &addr, sizeof(rxaddr));
                 // Receive from...
                 err = api->recv_from(&s, (void*) ((uintptr_t) data + rx_bytes), &len, &rxaddr, &rxport);
-                TEST_EQ(rxaddr.type, stack);
-                int rc = memcmp(&rxaddr.storage, &addr.storage, sizeof(rxaddr.storage));
+                int rc = memcmp(&rxaddr.ipv6be, &addr.ipv6be, sizeof(rxaddr.ipv6be));
                 if(!TEST_EQ(rc, 0)) {
                     TEST_PRINT("Spurious receive packet\r\n");
                 }
