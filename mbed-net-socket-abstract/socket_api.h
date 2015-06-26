@@ -84,6 +84,67 @@ socket_error_t socket_register_stack(const struct socket_api * api);
 const char * socket_strerror(const socket_error_t err);
 const struct socket_api * socket_get_api(const socket_stack_t stack);
 
+#ifndef htonl
+#include "cmsis.h"
+#define htonl(X) __REV(X)
+#endif
+
+static inline int socket_addr_is_ipv4(const struct socket_addr *addr)
+{
+    if ((addr->ipv6be[0] == 0) &&
+        (addr->ipv6be[1] == 0) &&
+        (addr->ipv6be[2] == htonl(0xFFFFL))) {
+            return 1;
+    } else {
+        return 0;
+    }
+}
+static inline int socket_addr_is_any(const struct socket_addr *addr)
+{
+    if ((addr->ipv6be[0] == 0) &&
+        (addr->ipv6be[1] == 0) &&
+        (addr->ipv6be[2] == 0) &&
+        (addr->ipv6be[3] == 0)) {
+            return 1;
+    } else {
+        return 0;
+    }
+}
+static inline void socket_addr_set_ipv4_addr(struct socket_addr *addr, uint32_t ipv4addr)
+{
+    addr->ipv6be[0] = 0;
+    addr->ipv6be[1] = 0;
+    addr->ipv6be[2] = htonl(0xFFFFL);
+    addr->ipv6be[3] = ipv4addr;
+}
+static inline uint32_t socket_addr_get_ipv4_addr(const struct socket_addr *addr){
+    if (!socket_addr_is_ipv4(addr)) {
+        return 0;
+    }
+    return addr->ipv6be[3];
+}
+static inline const uint32_t * socket_addr_get_ipv4_addrp(const struct socket_addr *addr){
+    if (!socket_addr_is_ipv4(addr)) {
+        return NULL;
+    }
+    return &addr->ipv6be[3];
+}
+#define socket_addr_set_any(a)\
+    do {\
+        (a)->ipv6be[0] = 0; \
+        (a)->ipv6be[1] = 0; \
+        (a)->ipv6be[2] = 0; \
+        (a)->ipv6be[3] = 0; \
+    } while(0)
+
+#define socket_addr_copy(dest, src) \
+    do {\
+        (dest)->ipv6be[0] = (src)->ipv6be[0]; \
+        (dest)->ipv6be[1] = (src)->ipv6be[1]; \
+        (dest)->ipv6be[2] = (src)->ipv6be[2]; \
+        (dest)->ipv6be[3] = (src)->ipv6be[3]; \
+    } while(0)
+
 #ifdef __cplusplus
 }
 #endif
