@@ -1,6 +1,6 @@
 {
   "name": "mbed-net-socket-abstract",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "C Socket abstraction layer",
   "private": true,
   "keywords": [],
@@ -22,7 +22,7 @@
     ]
   },
   "targetDependencies": {
-    "lwip-k64f": {
+    "lwip": {
       "mbed-net-lwip": "~0.1.2"
     },
     "nanostack": {
