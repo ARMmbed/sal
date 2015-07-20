@@ -26,7 +26,7 @@
       "mbed-net-lwip": "~0.1.2"
     },
     "nanostack": {
-      "mbed-6lowpan-adaptor": "~0.0.1"
+      "mbed-mesh-api": "~0.0.1"
     },
     "picotcp": {
       "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"
