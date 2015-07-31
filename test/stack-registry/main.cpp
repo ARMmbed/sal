@@ -12,6 +12,7 @@
 struct socket_api test_api[SOCKET_MAX_STACKS+1];
 struct socket_api expect_fail_api;
 
+#define SOCKET_ABSTRACTION_LAYER_VERSION 1
 
 int test_socket_stack_registry() {
     unsigned int i;
@@ -21,17 +22,27 @@ int test_socket_stack_registry() {
 
     // Try to register a stack marked as Uninitialized
     expect_fail_api.stack = SOCKET_STACK_UNINIT;
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack((&expect_fail_api));
     TEST_NEQ(err,SOCKET_ERROR_NONE);
 
     // Register a NULL socket api
     memset(&expect_fail_api, 0, sizeof(struct socket_api));
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack(&expect_fail_api);
     TEST_NEQ(err,SOCKET_ERROR_NONE);
 
     // Register a socket api with one zeroed API.
     memset(&expect_fail_api, 1, sizeof(struct socket_api));
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     expect_fail_api.create = NULL;
+    expect_fail_api.stack = static_cast<socket_stack_t>(SOCKET_STACK_UNINIT + 1);
+    err = socket_register_stack(&expect_fail_api);
+    TEST_NEQ(err,SOCKET_ERROR_NONE);
+
+    // Register a socket api with the version set wrong
+    memset(&expect_fail_api, 1, sizeof(struct socket_api));
+    expect_fail_api.version = 0;
     expect_fail_api.stack = static_cast<socket_stack_t>(SOCKET_STACK_UNINIT + 1);
     err = socket_register_stack(&expect_fail_api);
     TEST_NEQ(err,SOCKET_ERROR_NONE);
@@ -40,7 +51,9 @@ int test_socket_stack_registry() {
     memset(&test_api[0], 1, sizeof(struct socket_api));
     memset(&expect_fail_api, 1, sizeof(struct socket_api));
     test_api[0].stack = static_cast<socket_stack_t>(SOCKET_STACK_UNINIT + 1);
+    test_api[0].version = SOCKET_ABSTRACTION_LAYER_VERSION;
     expect_fail_api.stack = static_cast<socket_stack_t>(SOCKET_STACK_UNINIT + 1);
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack(&test_api[0]);
     TEST_EQ(err,SOCKET_ERROR_NONE);
     err = socket_register_stack(&expect_fail_api);
@@ -49,12 +62,14 @@ int test_socket_stack_registry() {
     // Register the same stack again, but with the stack ID changed
 
     test_api[0].stack = static_cast<socket_stack_t>(static_cast<uint32_t>(test_api[0].stack) + 1);
+    test_api[0].version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack(&test_api[0]);
     TEST_NEQ(err,SOCKET_ERROR_NONE);
     test_api[0].stack = static_cast<socket_stack_t>(static_cast<uint32_t>(test_api[0].stack) - 1);
 
     // Try to register a stack outside the accepted range
     expect_fail_api.stack = SOCKET_STACK_MAX;
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack(&expect_fail_api);
     TEST_NEQ(err,SOCKET_ERROR_NONE);
 
@@ -64,11 +79,13 @@ int test_socket_stack_registry() {
         socket_stack_t stack = static_cast<socket_stack_t>(SOCKET_STACK_UNINIT + 1 + i);
         memset (&test_api[i],1,sizeof(struct socket_api));
         test_api[i].stack = stack;
+        test_api[i].version = SOCKET_ABSTRACTION_LAYER_VERSION;
         err = socket_register_stack(&test_api[i]);
         TEST_EQ(err,SOCKET_ERROR_NONE);
     }
     // Then register one more.
     expect_fail_api.stack = static_cast<socket_stack_t>(SOCKET_MAX_STACKS + 1);
+    expect_fail_api.version = SOCKET_ABSTRACTION_LAYER_VERSION;
     err = socket_register_stack(&expect_fail_api);
     TEST_NEQ(err,SOCKET_ERROR_NONE);
 

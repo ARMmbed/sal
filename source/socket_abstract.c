@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <mbed-net-socket-abstract/socket_api.h>
-#include <mbed-net-socket-abstract/socket_types.h>
+#include "mbed-net-socket-abstract/socket_api.h"
+#include "mbed-net-socket-abstract/socket_types.h"
+
+#define SOCKET_ABSTRACTION_LAYER_VERSION 1
 
 const struct socket_api * socket_api_ptrs[SOCKET_MAX_STACKS] = { NULL };
 
@@ -96,6 +98,10 @@ socket_error_t socket_register_stack(const struct socket_api * api)
     if (api->stack == SOCKET_STACK_UNINIT || api->stack >= SOCKET_STACK_MAX) {
         return SOCKET_ERROR_BAD_STACK;
     }
+    if (api->version != SOCKET_ABSTRACTION_LAYER_VERSION) {
+        return SOCKET_ERROR_API_VERSION;
+    }
+
     // Check each API pointer
     for (fn = offsetof(struct socket_api, SOCKET_API_FIRST_PTR); fn <= offsetof(struct socket_api, SOCKET_API_LAST_PTR);
             fn += sizeof(void*)) {
