@@ -48,10 +48,10 @@ typedef socket_error_t (*socket_send_to)(struct socket *socket, const void * buf
 typedef socket_error_t (*socket_recv)(struct socket *socket, void * buf, size_t *len);
 typedef socket_error_t (*socket_recv_from)(struct socket *socket, void * buf, size_t *len, struct socket_addr *addr, uint16_t *port);
 
-typedef socket_error_t (*socket_get_local_addr)(struct socket *socket, struct socket_addr *addr);
-typedef socket_error_t (*socket_get_remote_addr)(struct socket *socket, struct socket_addr *addr);
-typedef socket_error_t (*socket_get_local_port)(struct socket *socket, uint16_t *port);
-typedef socket_error_t (*socket_get_remote_port)(struct socket *socket, uint16_t *port);
+typedef socket_error_t (*socket_get_local_addr)(const struct socket *socket, struct socket_addr *addr);
+typedef socket_error_t (*socket_get_remote_addr)(const struct socket *socket, struct socket_addr *addr);
+typedef socket_error_t (*socket_get_local_port)(const struct socket *socket, uint16_t *port);
+typedef socket_error_t (*socket_get_remote_port)(const struct socket *socket, uint16_t *port);
 
 typedef uint8_t (*socket_is_connected)(const struct socket *socket);
 typedef uint8_t (*socket_is_bound)(const struct socket *socket);
