@@ -1,5 +1,5 @@
 {
-  "name": "mbed-net-socket-abstract",
+  "name": "sal",
   "version": "0.1.7",
   "description": "C Socket abstraction layer",
   "private": true,
@@ -23,7 +23,7 @@
   },
   "targetDependencies": {
     "lwip": {
-      "mbed-net-lwip": "~0.1.2"
+      "sal-stack-lwip": "~0.1.2"
     },
     "nanostack": {
       "mbed-mesh-api": "~0.0.1"
