@@ -1,6 +1,6 @@
 {
   "name": "sal",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "C Socket abstraction layer",
   "private": true,
   "keywords": [],
