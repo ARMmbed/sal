@@ -294,7 +294,7 @@ static void blocking_resolve_cb()
         blocking_resolve_done = true;
         return;
     } else if (e->event == SOCKET_EVENT_DNS) {
-        socket_addr_copy(&blocking_resolve_addr, &e->i.d.addr);
+        socket_addr_copy((struct socket_addr *)(void *)&blocking_resolve_addr, (struct socket_addr *)(void *)&e->i.d.addr);
         blocking_resolve_domain = e->i.d.domain;
         blocking_resolve_err = SOCKET_ERROR_NONE;
         blocking_resolve_done = true;
