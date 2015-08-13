@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/ARMmbed/sal",
   "license": "Apache-2",
-  "dependencies": {
+  "testDependencies": {
       "mbed-drivers" : "~0.6.3"
   },
   "scripts": {
