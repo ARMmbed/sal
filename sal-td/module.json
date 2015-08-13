@@ -1,25 +1,18 @@
 {
-  "name": "sal",
-  "version": "0.2.1",
-  "description": "C Socket abstraction layer",
+  "name": "sal-td",
+  "version": "0.2.2",
+  "description": "C Socket abstraction layer (targetDependencies)",
   "private": true,
   "keywords": [],
   "author": "Brendan Moran <brendan.moran@arm.com>",
   "repository": {
-    "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
+    "url": "git@github.com:ARMmbed/sal.git",
     "type": "git"
   },
-  "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
+  "homepage": "https://github.com/ARMmbed/sal",
   "license": "Apache-2",
-  "dependencies": {},
-  "scripts": {
-    "testReporter": [
-      "mbedgt",
-      "--digest",
-      "stdin",
-      "-v",
-      "-V"
-    ]
+  "dependencies": {
+      "sal":"~0.2.2"
   },
   "targetDependencies": {
     "lwip": {

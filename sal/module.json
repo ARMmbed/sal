@@ -1,0 +1,26 @@
+{
+  "name": "sal",
+  "version": "0.2.2",
+  "description": "C Socket abstraction layer",
+  "private": true,
+  "keywords": [],
+  "author": "Brendan Moran <brendan.moran@arm.com>",
+  "repository": {
+    "url": "git@github.com:ARMmbed/sal.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/ARMmbed/sal",
+  "license": "Apache-2",
+  "dependencies": {
+      "mbed-drivers" : "~0.6.3"
+  },
+  "scripts": {
+    "testReporter": [
+      "mbedgt",
+      "--digest",
+      "stdin",
+      "-v",
+      "-V"
+    ]
+  }
+}
