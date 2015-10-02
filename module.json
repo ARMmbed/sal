@@ -1,6 +1,6 @@
 {
   "name": "sal",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "C Socket abstraction layer",
   "keywords": [],
   "author": "Brendan Moran <brendan.moran@arm.com>",
