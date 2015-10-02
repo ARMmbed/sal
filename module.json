@@ -21,8 +21,8 @@
     ]
   },
   "targetDependencies": {
-    "lwip": {
-      "sal-stack-lwip": "~0.2.0"
+    "mbed-os.net.stacks.lwip": {
+      "sal-stack-lwip": "~0.3.0"
     },
     "nanostack": {
       "mbed-mesh-api": "~0.0.1"
