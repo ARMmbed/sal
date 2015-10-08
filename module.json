@@ -1,6 +1,6 @@
 {
   "name": "sal",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "C Socket abstraction layer",
   "keywords": [],
   "author": "Brendan Moran <brendan.moran@arm.com>",
@@ -22,7 +22,7 @@
   },
   "targetDependencies": {
     "/mbed-os/net/stacks/lwip": {
-      "sal-stack-lwip": "~0.3.0"
+      "sal-stack-lwip": "~0.4.0"
     },
     "nanostack": {
       "mbed-mesh-api": "~0.0.1"
