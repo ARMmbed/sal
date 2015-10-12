@@ -25,7 +25,7 @@
       "sal-stack-lwip": "~0.4.0"
     },
     "/mbed-os/net/stacks/nanostack": {
-      "mbed-mesh-api": "<1.0.0"
+      "mbed-mesh-api": "~0.3.0"
     },
     "picotcp": {
       "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"
