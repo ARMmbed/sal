@@ -2,7 +2,10 @@
   "name": "sal",
   "version": "0.4.1",
   "description": "C Socket abstraction layer",
-  "keywords": [],
+  "keywords": [
+    "mbed",
+    "mbed-official"
+  ],
   "author": "Brendan Moran <brendan.moran@arm.com>",
   "repository": {
     "url": "git@github.com:ARMmbed/mbed-net-socket-abstract.git",
@@ -22,7 +25,7 @@
   },
   "targetDependencies": {
     "/mbed-os/net/stacks/lwip": {
-      "sal-stack-lwip": "~0.4.0"
+      "sal-stack-lwip": "^1.0.0"
     },
     "nanostack": {
       "mbed-mesh-api": "~0.0.1"
