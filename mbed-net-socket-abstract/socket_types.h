@@ -115,6 +115,28 @@ typedef enum {
     SOCKET_BUFFER_NANOSTACK_PBUF,
 } socket_buffer_type_t;
 
+typedef enum {
+    SOCKET_OPT_UNINIT = 0,
+    SOCKET_OPT_NAGGLE,
+    SOCKET_OPT_KEEPALIVE,
+    SOCKET_OPT_MAX
+} socket_option_type_t;
+
+typedef enum {
+    SOCKET_PROTO_LEVEL_UNINIT = 0,
+    SOCKET_PROTO_LEVEL_RAW,
+    SOCKET_PROTO_LEVEL_ICMP,
+    SOCKET_PROTO_LEVEL_ICMP6,
+    SOCKET_PROTO_LEVEL_IGMP,
+    SOCKET_PROTO_LEVEL_IGMP6,
+    SOCKET_PROTO_LEVEL_IP,
+    SOCKET_PROTO_LEVEL_IPV6,
+    SOCKET_PROTO_LEVEL_TCP,
+    SOCKET_PROTO_LEVEL_UDP,
+    SOCKET_PROTO_LEVEL_SOCK,
+    SOCKET_PROTO_LEVEL_MAX
+} socket_proto_level_t;
+
 struct socket_addr {
     uint32_t ipv6be[4];
 };
