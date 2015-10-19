@@ -1,5 +1,5 @@
 /*
- * PackageLicenseDeclared: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (c) 2015 ARM Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,10 @@
 extern "C" {
 #endif
 
+#ifdef YOTTA_CFG_MBED_OS_NET_STACKS_MAX
+#define SOCKET_MAX_STACKS YOTTA_CFG_MBED_OS_NET_STACKS_MAX
+#endif
+
 #ifndef SOCKET_MAX_STACKS
 #define SOCKET_MAX_STACKS 2
 #endif
@@ -44,10 +48,15 @@ typedef socket_error_t (*socket_stop_listen)(struct socket *socket);
 typedef socket_error_t (*socket_accept)(struct socket *sock, socket_api_handler_t handler);
 typedef socket_error_t (*socket_reject)(struct socket *sock);
 typedef socket_error_t (*socket_send)(struct socket *socket, const void * buf, const size_t len);
-typedef socket_error_t (*socket_send_to)(struct socket *socket, const void * buf, const size_t len, const struct socket_addr *addr, const uint16_t port);
+typedef socket_error_t (*socket_send_to)(struct socket *socket, const void * buf, const size_t len,
+        const struct socket_addr *addr, const uint16_t port);
 typedef socket_error_t (*socket_recv)(struct socket *socket, void * buf, size_t *len);
-typedef socket_error_t (*socket_recv_from)(struct socket *socket, void * buf, size_t *len, struct socket_addr *addr, uint16_t *port);
-
+typedef socket_error_t (*socket_recv_from)(struct socket *socket, void * buf, size_t *len, struct socket_addr *addr,
+        uint16_t *port);
+typedef socket_error_t (*socket_set_option)(struct socket *socket, const socket_proto_level_t level,
+        const socket_option_type_t type, const void *option, const size_t optionSize);
+typedef socket_error_t (*socket_get_option)(struct socket *socket, const socket_proto_level_t level,
+        const socket_option_type_t type, void *option, const size_t optionSize);
 typedef socket_error_t (*socket_get_local_addr)(const struct socket *socket, struct socket_addr *addr);
 typedef socket_error_t (*socket_get_remote_addr)(const struct socket *socket, struct socket_addr *addr);
 typedef socket_error_t (*socket_get_local_port)(const struct socket *socket, uint16_t *port);
@@ -77,6 +86,8 @@ struct socket_api {
     socket_send_to              send_to;
     socket_recv                 recv;
     socket_recv_from            recv_from;
+    socket_set_option           set_option;
+    socket_get_option           get_option;
     socket_is_connected         is_connected;
     socket_is_bound             is_bound;
     socket_get_local_addr       get_local_addr;
