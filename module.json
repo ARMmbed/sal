@@ -27,6 +27,9 @@
     "nanostack": {
       "mbed-mesh-api": "~0.0.1"
     },
+    "/mbed-os/net/stacks/nanostack": {
+      "mbed-mesh-api": "~0.0.1"
+    },
     "picotcp": {
       "mbed-net-picotcp-wrapper": "ARMmbed/mbed-net-picotcp-wrapper"
     }
