@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-#include <mbed-net-socket-abstract/test/sal_test_api.h>
-#include <mbed-net-socket-abstract/socket_api.h>
-#include <mbed-net-socket-abstract/test/ctest_env.h>
-#include <mbed/Timeout.h>
-#include <mbed/Ticker.h>
-#include <mbed/mbed.h>
+#include "sal/test/sal_test_api.h"
+#include "sal/socket_api.h"
+#include "sal/test/ctest_env.h"
+#include "mbed/Timeout.h"
+#include "mbed/Ticker.h"
+#include "mbed/mbed.h"
 
 #ifndef SOCKET_TEST_TIMEOUT
 #define SOCKET_TEST_TIMEOUT 1.0f

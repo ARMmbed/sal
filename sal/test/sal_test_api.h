@@ -17,7 +17,7 @@
 
 #ifndef __SAL_TEST_SAL_TEST_API_H__
 #define __SAL_TEST_SAL_TEST_API_H__
-#include <mbed-net-socket-abstract/socket_types.h>
+#include "sal/socket_types.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

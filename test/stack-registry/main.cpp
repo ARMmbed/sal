@@ -16,10 +16,10 @@
  */
 
 #include <stdio.h>
-#include <mbed-net-socket-abstract/socket_api.h>
-#include <mbed-net-socket-abstract/test/ctest_env.h>
 #include <string.h>
-#include <mbed/test_env.h>
+#include "sal/socket_api.h"
+#include "sal/test/ctest_env.h"
+#include "mbed/test_env.h"
 
 struct socket_api test_api[SOCKET_MAX_STACKS+1];
 struct socket_api expect_fail_api;
