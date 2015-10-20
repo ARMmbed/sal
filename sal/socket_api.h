@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
-#define __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
+#ifndef __SAL_SOCKET_API_H__
+#define __SAL_SOCKET_API_H__
 
 #include <stdint.h>
 #include "socket_types.h"
@@ -177,4 +177,4 @@ static inline int socket_addr_cmp(const struct socket_addr *a, const struct sock
 }
 #endif
 
-#endif /* __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__ */
+#endif /* __SAL_SOCKET_API_H__ */

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef __MBED_NET_SOCKET_ABSTRACT_TEST_SAL_TEST_API_H__
-#define __MBED_NET_SOCKET_ABSTRACT_TEST_SAL_TEST_API_H__
+#ifndef __SAL_TEST_SAL_TEST_API_H__
+#define __SAL_TEST_SAL_TEST_API_H__
 #include <mbed-net-socket-abstract/socket_types.h>
 #ifdef __cplusplus
 extern "C" {

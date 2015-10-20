@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
-#define __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
+#ifndef __SAL_SOCKET_TYPES_H__
+#define __SAL_SOCKET_TYPES_H__
 
 #include <stddef.h>
 #include <stdint.h>
@@ -200,4 +200,4 @@ struct socket {
 #ifdef __cplusplus
 }
 #endif
-#endif /* __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__ */
+#endif /* __SAL_SOCKET_TYPES_H__ */
