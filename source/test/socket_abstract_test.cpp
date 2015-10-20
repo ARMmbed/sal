@@ -18,9 +18,9 @@
 #include "sal/test/sal_test_api.h"
 #include "sal/socket_api.h"
 #include "sal/test/ctest_env.h"
-#include "mbed/Timeout.h"
-#include "mbed/Ticker.h"
-#include "mbed/mbed.h"
+#include "mbed-drivers/Timeout.h"
+#include "mbed-drivers/Ticker.h"
+#include "mbed-drivers/mbed.h"
 
 #ifndef SOCKET_TEST_TIMEOUT
 #define SOCKET_TEST_TIMEOUT 1.0f
