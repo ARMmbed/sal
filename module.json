@@ -27,11 +27,8 @@
     "/mbed-os/net/stacks/lwip": {
       "sal-stack-lwip": "^1.0.0"
     },
-    "nanostack": {
-      "mbed-mesh-api": "~0.0.1"
-    },
     "/mbed-os/net/stacks/nanostack": {
-      "mbed-mesh-api": "~0.3.6"
+      "mbed-mesh-api": "^1.0.0"
     }
   }
 }
