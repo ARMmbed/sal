@@ -17,5 +17,5 @@
 #ifndef __MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H__
 #define __MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H__
 #warning mbed-net-socket-abstract/test/ctest_env.h is deprecated.  Please use sal/test/ctest_env.h instead.
-#include "../../sal/test/ctest_env.h"
+#include "sal/test/ctest_env.h"
 #endif // __MBED_NET_SOCKET_ABSTRACT_TEST_CTEST_ENV_H__

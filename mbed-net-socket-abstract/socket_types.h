@@ -17,6 +17,6 @@
 #ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
 #define __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
 #warning mbed-net-socket-abstract/socket_types.h is deprecated.  Please use sal/socket_types.h instead.
-#include "../sal/socket_types.h"
+#include "sal/socket_types.h"
 #endif // __MBED_NET_SOCKET_ABSTRACT_SOCKET_TYPES_H__
 

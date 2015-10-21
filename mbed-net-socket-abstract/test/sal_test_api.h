@@ -17,5 +17,5 @@
 #ifndef __MBED_NET_SOCKET_ABSTRACT_TEST_SAL_TEST_API_H__
 #define __MBED_NET_SOCKET_ABSTRACT_TEST_SAL_TEST_API_H__
 #warning mbed-net-socket-abstract/test/sal_test_api.h is deprecated.  Please use sal/test/sal_test_api.h instead.
-#include "../../sal/test/sal_test_api.h"
+#include "sal/test/sal_test_api.h"
 #endif // __MBED_NET_SOCKET_ABSTRACT_TEST_SAL_TEST_API_H__

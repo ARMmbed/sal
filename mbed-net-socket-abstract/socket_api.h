@@ -17,6 +17,6 @@
 #ifndef __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 #define __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 #warning mbed-net-socket-abstract/socket_api.h is deprecated.  Please use sal/socket_api.h instead.
-#include "../sal/socket_api.h"
+#include "sal/socket_api.h"
 #endif // __MBED_NET_SOCKET_ABSTRACT_SOCKET_API_H__
 
