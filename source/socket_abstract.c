@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "mbed-net-socket-abstract/socket_api.h"
-#include "mbed-net-socket-abstract/socket_types.h"
+#include "sal/socket_api.h"
+#include "sal/socket_types.h"
 
 #define SOCKET_ABSTRACTION_LAYER_VERSION 1
 
