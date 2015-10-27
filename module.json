@@ -1,6 +1,6 @@
 {
   "name": "sal",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "C Socket abstraction layer",
   "keywords": [
     "mbed",
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
   "license": "Apache-2",
   "dependencies": {
-      "cmsis-core" : "^1.0.1"
+    "cmsis-core": "^1.0.1"
   },
   "scripts": {
     "testReporter": [
