@@ -124,7 +124,7 @@ int test_socket_stack_registry() {
 void app_start(int, char**) {
     int rc;
     MBED_HOSTTEST_SELECT(default);
-    MBED_HOSTTEST_TIMEOUT(1);
+    MBED_HOSTTEST_TIMEOUT(10);
     MBED_HOSTTEST_DESCRIPTION(Test the socket stack registry);
     MBED_HOSTTEST_START("STACK_REGISTRY");
     rc = test_socket_stack_registry();
