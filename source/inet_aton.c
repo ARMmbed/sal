@@ -133,4 +133,3 @@ inet_aton(const char *cp, struct in_addr *addr)
 		addr->s_addr = htonl(val);
 	return (1);
 }
-
