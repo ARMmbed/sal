@@ -117,6 +117,7 @@ typedef enum {
 
 typedef enum {
     SOCKET_OPT_UNINIT = 0,
+    SOCKET_OPT_NAGGLE, //Deprecated
     SOCKET_OPT_NAGLE,
     SOCKET_OPT_KEEPALIVE,
     SOCKET_OPT_MAX
