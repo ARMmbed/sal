@@ -12,7 +12,7 @@
     "type": "git"
   },
   "homepage": "https://github.com/ARMmbed/mbed-net-socket-abstract",
-  "license": "Apache-2",
+  "license": "(Apache-2.0 AND BSD-2-Clause AND MIT)",
   "dependencies": {
     "cmsis-core": "^1.0.1"
   },

@@ -27,19 +27,14 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include <sys/param.h>
-#include <sys/systm.h>
-
-#include <netinet/in.h>
+#include "inet_adaptor.h"
 
 char *
-inet_ntoa(struct in_addr ina)
+inet_ntoa(struct socket_addr ina)
 {
 	static char buf[4*sizeof "123"];
-	unsigned char *ucp = (unsigned char *)&ina;
+	in_addr_t ia = socket_addr_get_ipv4_addr(&ina);
+	unsigned char *ucp = (unsigned char *)&ia;
 
 	sprintf(buf, "%d.%d.%d.%d",
 		ucp[0] & 0xff,
@@ -50,9 +45,10 @@ inet_ntoa(struct in_addr ina)
 }
 
 char *
-inet_ntoa_r(struct in_addr ina, char *buf)
+inet_ntoa_r(struct socket_addr ina, char *buf)
 {
-	unsigned char *ucp = (unsigned char *)&ina;
+	in_addr_t ia = socket_addr_get_ipv4_addr(&ina);
+	unsigned char *ucp = (unsigned char *)&ia;
 
 	sprintf(buf, "%d.%d.%d.%d",
 		ucp[0] & 0xff,

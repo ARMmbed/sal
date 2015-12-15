@@ -18,14 +18,8 @@
 #if defined(LIBC_SCCS) && !defined(lint)
 static const char rcsid[] = "$Id: inet_ntop.c,v 1.3.18.2 2005/11/03 23:02:22 marka Exp $";
 #endif /* LIBC_SCCS and not lint */
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
 
-#include <sys/param.h>
-#include <sys/socket.h>
-#include <sys/systm.h>
-
-#include <netinet/in.h>
+#include "inet_adaptor.h"
 
 /*%
  * WARNING: Don't even consider trying to compile this on a system where

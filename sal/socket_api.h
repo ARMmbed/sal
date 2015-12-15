@@ -107,6 +107,22 @@ const struct socket_api * socket_get_api(const socket_stack_t stack);
 #define htonl(X) __REV(X)
 #endif
 
+#ifndef socklen_t
+typedef uint32_t      __socklen_t;
+typedef	__socklen_t	socklen_t;
+#endif
+
+char *
+inet_ntop(int af, const void *src, char *dst, socklen_t size);
+int
+inet_pton(int af, const char *src, void *dst);
+char *
+inet_ntoa(struct socket_addr ina);
+char *
+inet_ntoa_r(struct socket_addr ina, char *buf);
+int
+inet_aton(const char *cp, struct socket_addr *addr);
+
 static inline int socket_addr_is_ipv4(const struct socket_addr *addr)
 {
     if ((addr->ipv6be[0] == 0) &&

@@ -24,18 +24,10 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include <sys/param.h>
-#include <sys/ctype.h>
-#include <sys/limits.h>
-#include <sys/systm.h>
-
-#include <netinet/in.h>
+#include "inet_adaptor.h"
 
 int
-inet_aton(const char *cp, struct in_addr *addr)
+inet_aton(const char *cp, struct socket_addr *addr)
 {
 	u_long parts[4];
 	in_addr_t val;
@@ -130,6 +122,6 @@ inet_aton(const char *cp, struct in_addr *addr)
 	}
 
 	if (addr != NULL)
-		addr->s_addr = htonl(val);
+		socket_addr_set_ipv4_addr(addr,val);
 	return (1);
 }
