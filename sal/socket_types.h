@@ -122,10 +122,6 @@ typedef enum {
     SOCKET_OPT_MAX
 } socket_option_type_t;
 
-struct socket_nagle_info {
-    uint32_t enable;
-}
-
 typedef enum {
     SOCKET_PROTO_LEVEL_UNINIT = 0,
     SOCKET_PROTO_LEVEL_RAW,
