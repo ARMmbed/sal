@@ -1,6 +1,6 @@
 {
   "name": "sal",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "C Socket abstraction layer",
   "keywords": [
     "mbed",
