@@ -41,13 +41,19 @@ static int	inet_pton6(const char *src, u_char *dst);
  *	Paul Vixie, 1996.
  */
 int
-inet_pton(int af, const char *src, void *dst)
+inet_pton(int af, const char *src, struct socket_addr *dst)
 {
 	switch (af) {
-	case AF_INET:
-		return (inet_pton4(src, dst));
+	case AF_INET: {
+		in_addr_t addr;
+		int rc = inet_pton4(src, (void*)&addr);
+		if (rc == 1) {
+			socket_addr_set_ipv4_addr(dst, addr);
+		}
+		return rc;
+	}
 	case AF_INET6:
-		return (inet_pton6(src, dst));
+		return (inet_pton6(src, (void*)dst->ipv6be));
 	default:
 		return (-1);
 	}
