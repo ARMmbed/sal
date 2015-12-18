@@ -121,3 +121,11 @@ socket_error_t socket_register_stack(const struct socket_api * api)
     }
     return SOCKET_ERROR_STACKS;
 }
+
+socket_error_t socket_accept(struct socket *listener, struct socket *stream, socket_api_handler_t handler) {
+    if (listener->api->accept_v2 != NULL) {
+        return listener->api->accept_v2(listener, stream, handler);
+    } else {
+        return listener->api->accept(stream, handler);
+    }
+}

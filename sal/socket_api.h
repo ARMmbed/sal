@@ -45,7 +45,7 @@ typedef socket_error_t (*socket_bind)(struct socket *socket, const struct socket
 typedef socket_error_t (*socket_str2addr)(const struct socket *socket, struct socket_addr *addr, const char *address);
 typedef socket_error_t (*socket_start_listen)(struct socket *socket, const uint32_t backlog);
 typedef socket_error_t (*socket_stop_listen)(struct socket *socket);
-typedef socket_error_t (*socket_accept)(struct socket *sock, socket_api_handler_t handler);
+typedef socket_error_t (*socket_accept_ptr)(struct socket *sock, socket_api_handler_t handler);
 typedef socket_error_t (*socket_reject)(struct socket *sock);
 typedef socket_error_t (*socket_send)(struct socket *socket, const void * buf, const size_t len);
 typedef socket_error_t (*socket_send_to)(struct socket *socket, const void * buf, const size_t len,
@@ -64,6 +64,7 @@ typedef socket_error_t (*socket_get_remote_port)(const struct socket *socket, ui
 
 typedef uint8_t (*socket_is_connected)(const struct socket *socket);
 typedef uint8_t (*socket_is_bound)(const struct socket *socket);
+typedef socket_error_t (*socket_accept_v2_ptr)(struct socket *listener, struct socket *stream, socket_api_handler_t handler);
 
 struct socket_api {
     socket_stack_t              stack;
@@ -80,7 +81,7 @@ struct socket_api {
     socket_bind                 bind;
     socket_start_listen         start_listen;
     socket_stop_listen          stop_listen;
-    socket_accept               accept;
+    socket_accept_ptr           accept;
     socket_reject               reject;
     socket_send                 send;
     socket_send_to              send_to;
@@ -94,6 +95,8 @@ struct socket_api {
     socket_get_remote_addr      get_remote_addr;
     socket_get_local_port       get_local_port;
     socket_get_remote_port      get_remote_port;
+    // API indirected function pointers
+    socket_accept_v2_ptr        accept_v2;
 };
 #define SOCKET_API_FIRST_PTR init
 #define SOCKET_API_LAST_PTR get_remote_port
@@ -101,6 +104,8 @@ struct socket_api {
 socket_error_t socket_register_stack(const struct socket_api * api);
 const char * socket_strerror(const socket_error_t err);
 const struct socket_api * socket_get_api(const socket_stack_t stack);
+
+socket_error_t socket_accept(struct socket *listener, struct socket *stream, socket_api_handler_t handler);
 
 #ifndef htonl
 #include "cmsis.h"
