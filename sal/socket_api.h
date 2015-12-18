@@ -115,7 +115,7 @@ typedef	__socklen_t	socklen_t;
 char *
 inet_ntop(int af, const void *src, char *dst, socklen_t size);
 int
-inet_pton(int af, const char *src, void *dst);
+inet_pton(int af, const char *src, struct socket_addr *dst);
 char *
 inet_ntoa(struct socket_addr ina);
 char *
