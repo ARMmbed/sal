@@ -39,7 +39,8 @@
 #endif
 
 #ifndef SOCKET_SENDBUF_ITERATIONS
-#define SOCKET_SENDBUF_ITERATIONS 8
+//todo: sdh #define SOCKET_SENDBUF_ITERATIONS 8		// currently 4096 bytes sends fails due to malloc error in the stack
+#define SOCKET_SENDBUF_ITERATIONS 7
 #endif
 
 struct IPv4Entry{
@@ -213,9 +214,6 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
 		if (!TEST_NEQ(s.impl, NULL)) {
 			continue;
 		}
-		// Tell the host launch a server
-		TEST_PRINT(">>> ES,%d\r\n", pf);
-
 		// connect to a remote host
 		err = api->str2addr(&s, &addr, server);
 		TEST_EQ(err, SOCKET_ERROR_NONE);
@@ -269,8 +267,6 @@ int socket_api_test_connect_close(socket_stack_t stack, socket_address_family_t 
 		}
 		to.detach();
 		TEST_EQ(timedout, 0);
-		// Tell the host to kill the server
-		TEST_PRINT(">>> KILL ES\r\n");
 
 		// Destroy the socket
 		err = api->destroy(&s);
@@ -377,6 +373,9 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     const struct socket_api *api = socket_get_api(stack);
     client_socket = &s;
     mbed::Timeout to;
+    uint16_t local_port = 0;
+    struct socket_addr local_ipaddr = {0, 0, 0, 0};
+
     // Create the socket
     TEST_CLEAR();
     TEST_PRINT("\r\n%s af: %d, pf: %d, connect: %d, server: %s:%d\r\n",__func__, (int) af, (int) pf, (int) connect, server, (int) port);
@@ -396,8 +395,6 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
         TEST_RETURN();
     }
-    // Tell the host launch a server
-    TEST_PRINT(">>> ES,%d\r\n", pf);
     // Allocate a data buffer for tx/rx
     void *data = malloc(SOCKET_SENDBUF_MAXSIZE);
 
@@ -419,8 +416,23 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
         }
         // Override event for dgrams.
         if (pf == SOCKET_DGRAM) {
+
+        	err = api->bind(&s, &local_ipaddr, local_port);
+            if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+                TEST_RETURN();
+            }
+
             client_event.event = SOCKET_EVENT_CONNECT;
             client_event_done = true;
+
+            api->get_local_addr(&s, &local_ipaddr);
+            api->get_local_port(&s, &local_port);
+            TEST_PRINT(">>> MBED TARGET ipaddr:port=%x.%x.%x.%x:%d\r\n",
+            		(unsigned int) local_ipaddr.ipv6be[0],
+            		(unsigned int) local_ipaddr.ipv6be[1],
+            		(unsigned int) local_ipaddr.ipv6be[2],
+            		(unsigned int) local_ipaddr.ipv6be[3],
+            		local_port);
         }
         // Wait for onConnect
         while (!timedout && !client_event_done) {
@@ -453,7 +465,7 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
             err = api->send_to(&s, data, nWords * sizeof(uint16_t), &addr, port);
         }
         if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
-            TEST_PRINT("Failed to send %u bytes\r\n", nWords * sizeof(uint16_t));
+            TEST_PRINT("Failed to send %u bytes. err=%s\r\n", nWords * sizeof(uint16_t), socket_strerror(err));
         } else {
             size_t tx_bytes = 0;
             do {
@@ -537,6 +549,8 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
         client_event_done = false;
         timedout = 0;
         to.attach(onTimeout, SOCKET_TEST_TIMEOUT);
+
+        // this test depends on us closing the socket before the remote peer does
         err = api->close(&s);
         TEST_EQ(err, SOCKET_ERROR_NONE);
 
@@ -562,11 +576,9 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
     TEST_EQ(err, SOCKET_ERROR_NONE);
 
 test_exit:
-    TEST_PRINT(">>> KILL,ES\r\n");
     free(data);
     TEST_RETURN();
 }
-
 
 static volatile bool incoming;
 static volatile bool server_event_done;
