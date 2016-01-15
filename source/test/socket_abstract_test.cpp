@@ -39,8 +39,7 @@
 #endif
 
 #ifndef SOCKET_SENDBUF_ITERATIONS
-//todo: sdh #define SOCKET_SENDBUF_ITERATIONS 8		// currently 4096 bytes sends fails due to malloc error in the stack
-#define SOCKET_SENDBUF_ITERATIONS 7
+#define SOCKET_SENDBUF_ITERATIONS 8
 #endif
 
 struct IPv4Entry{
@@ -485,7 +484,14 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
                     continue;
                 }
                 to.detach();
-                TEST_EQ(tx_bytes, nWords * sizeof(uint16_t));
+                if(TEST_EQ(tx_bytes, nWords * sizeof(uint16_t)))
+                {
+                    TEST_PRINT("TARGET sent %d bytes\r\n", tx_bytes);
+                }
+                else
+                {
+                    TEST_PRINT("ERROR: TARGET did not send successfully\r\n");
+                }
                 break;
             } while (1);
         }
@@ -525,6 +531,10 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
             if (rx_bytes < nWords * sizeof(uint16_t)) {
                 client_rx_done = false;
                 continue;
+            }
+            else if(rx_bytes== nWords * sizeof(uint16_t))
+            {
+                TEST_PRINT("TARGET received %d bytes\r\n", rx_bytes);
             }
             to.detach();
             break;
