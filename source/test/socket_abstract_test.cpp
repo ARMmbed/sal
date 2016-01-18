@@ -696,8 +696,7 @@ int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_fami
         }
         // Stop listening
         server_event_done = false;
-        // err = api->stop_listen(&s);
-        // TEST_EQ(err, SOCKET_ERROR_NONE);
+
         // Accept an incoming connection
         cs.impl = server_event.i.a.newimpl;
         cs.family = s.family;
@@ -708,19 +707,18 @@ int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_fami
         }
         to.attach(onTimeout, SOCKET_TEST_SERVER_TIMEOUT);
 
-                    // Client should test for successive connections being rejected
+        // Client should test for successive connections being rejected
         // Until Client disconnects
+        client_rx_done = false;
+        client_tx_done = false;
         while (client_event.event != SOCKET_EVENT_ERROR && client_event.event != SOCKET_EVENT_DISCONNECT) {
-            // Wait for a read event
-            while (!client_event_done && !client_rx_done && !timedout) {
+            while (!client_rx_done && !client_tx_done && !timedout) {
                 __WFI();
             }
-            if (!TEST_EQ(client_event_done, false)) {
-                client_event_done = false;
-                continue;
-            }
+
             // Reset the state of client_rx_done
             client_rx_done = false;
+            client_tx_done = false;
 
             // Receive some data
             size_t len = SOCKET_SENDBUF_MAXSIZE;
@@ -733,6 +731,7 @@ int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_fami
             	TEST_PRINT("err: (%d) %s\r\n", err, socket_strerror(err));
                 break;
             }
+            printf("received %u bytes of data\r\n", len);
 
             // Check if the server should halt
             if (strncmp((const char *)data, "quit", 4) == 0) {
@@ -742,8 +741,11 @@ int socket_api_test_echo_server_stream(socket_stack_t stack, socket_address_fami
             // Send some data
             err = api->send(&cs, data, len);
             if (!TEST_EQ(err, SOCKET_ERROR_NONE)) {
+                TEST_PRINT("Failed to send %u bytes. err=%s\r\n", len, socket_strerror(err));
                 break;
             }
+            printf("sent %u bytes of data\r\n", len);
+
         }
         to.detach();
         TEST_NEQ(timedout, true);
