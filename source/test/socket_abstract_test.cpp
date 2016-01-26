@@ -423,15 +423,6 @@ int socket_api_test_echo_client_connected(socket_stack_t stack, socket_address_f
 
             client_event.event = SOCKET_EVENT_CONNECT;
             client_event_done = true;
-
-            api->get_local_addr(&s, &local_ipaddr);
-            api->get_local_port(&s, &local_port);
-            TEST_PRINT(">>> MBED TARGET ipaddr:port=%x.%x.%x.%x:%d\r\n",
-            		(unsigned int) local_ipaddr.ipv6be[0],
-            		(unsigned int) local_ipaddr.ipv6be[1],
-            		(unsigned int) local_ipaddr.ipv6be[2],
-            		(unsigned int) local_ipaddr.ipv6be[3],
-            		local_port);
         }
         // Wait for onConnect
         while (!timedout && !client_event_done) {
