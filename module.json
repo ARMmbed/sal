@@ -25,11 +25,13 @@
       "-V"
     ]
   },
-  "targetDependencies": {
-    "/mbed-os/net/stacks/lwip": {
-      "sal-stack-lwip": "^1.0.0",
+  "testDepenndencies" : {
       "unity": "^2.0.1",
       "greentea-client": "~0.1.4"
+  }
+  "targetDependencies": {
+    "/mbed-os/net/stacks/lwip": {
+      "sal-stack-lwip": "^1.0.0"
     },
     "/mbed-os/net/stacks/nanostack": {
       "mbed-mesh-api": "^2.0.0"
