@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ##[Unreleased]
 
+## [v1.1.6]
+### Added
+* Configuration file to support test coverage generation
+
 ## [v1.1.5]
 ### Improved
 * Update tests to use mbed-greentea test infrastructure
