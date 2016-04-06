@@ -31,6 +31,9 @@
     },
     "/mbed-os/net/stacks/nanostack": {
       "mbed-mesh-api": "^2.0.0"
+    },
+	"/mbed-os/net/stacks/atmel": {
+      "sal-stack-atmel": "^1.0.0"
     }
   },
   "testDependencies": {
