@@ -34,13 +34,12 @@ inet_ntoa(struct socket_addr ina)
 {
 	static char buf[4*sizeof "123"];
 	in_addr_t ia = socket_addr_get_ipv4_addr(&ina);
-	unsigned char *ucp = (unsigned char *)&ia;
 
-	sprintf(buf, "%d.%d.%d.%d",
-		ucp[0] & 0xff,
-		ucp[1] & 0xff,
-		ucp[2] & 0xff,
-		ucp[3] & 0xff);
+	sprintf(buf, "%u.%u.%u.%u",
+		(unsigned)((ia >> 24) & 0xff),
+		(unsigned)((ia >> 16) & 0xff),
+		(unsigned)((ia >>  8) & 0xff),
+		(unsigned)((ia >>  0) & 0xff));
 	return buf;
 }
 
@@ -48,12 +47,11 @@ char *
 inet_ntoa_r(struct socket_addr ina, char *buf)
 {
 	in_addr_t ia = socket_addr_get_ipv4_addr(&ina);
-	unsigned char *ucp = (unsigned char *)&ia;
 
-	sprintf(buf, "%d.%d.%d.%d",
-		ucp[0] & 0xff,
-		ucp[1] & 0xff,
-		ucp[2] & 0xff,
-		ucp[3] & 0xff);
+	sprintf(buf, "%u.%u.%u.%u",
+		(unsigned)((ia >> 24) & 0xff),
+		(unsigned)((ia >> 16) & 0xff),
+		(unsigned)((ia >>  8) & 0xff),
+		(unsigned)((ia >>  0) & 0xff));
 	return buf;
 }
